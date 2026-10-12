@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FONA Mathematics Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ FONA Mathematics Intelligence — Design System ═══
+   Layout : Full-screen SPA, sticky top nav, card grid content
+   Palette: FONA navy/gold, dark-first with light override      */
+
+:root {
+  --navy:    #09182A;
+  --navy2:   #112236;
+  --navy3:   #192F4A;
+  --navy4:   #1E3A5A;
+  --gold:    #F5A623;
+  --gold2:   #FFD07B;
+  --gold-bg: rgba(245,166,35,.13);
+  --blue:    #4D9FFF;
+  --green:   #2ECC8A;
+  --red:     #FF6B6B;
+  --purple:  #A78BFA;
+  --orange:  #FF8C42;
+
+  --bg:      var(--navy);
+  --s1:      var(--navy2);
+  --s2:      var(--navy3);
+  --s3:      var(--navy4);
+  --border:  rgba(77,159,255,.15);
+  --fg:      #E8F4FF;
+  --fg2:     #8AAEC8;
+  --fg3:     #4A6A84;
+  --accent:  var(--gold);
+
+  --fh: 'Nunito', system-ui, sans-serif;
+  --fb: 'Space Grotesk', system-ui, sans-serif;
+  --r: 14px; --rl: 22px;
+  --shadow: 0 4px 24px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#EEF3FF;--s1:#fff;--s2:#F0F6FF;--s3:#E2ECFF;
+    --border:rgba(13,27,42,.1);--fg:#0D1B2A;--fg2:#3A5470;--fg3:#7A94A8;
+    --gold-bg:rgba(245,166,35,.1); color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#EEF3FF;--s1:#fff;--s2:#F0F6FF;--s3:#E2ECFF;
+  --border:rgba(13,27,42,.1);--fg:#0D1B2A;--fg2:#3A5470;--fg3:#7A94A8;
+  --gold-bg:rgba(245,166,35,.1); color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fb);background:var(--bg);color:var(--fg);min-height:100dvh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--fh);font-weight:800}
+button{cursor:pointer;border:none;font-family:var(--fb);font-size:1rem}
+input{font-family:var(--fb);font-size:1rem}
+img{max-width:100%}
+
+/* ─── LAYOUT ─── */
+#app{display:flex;flex-direction:column;min-height:100dvh}
+.page{flex:1;padding:20px 20px 90px;max-width:900px;margin:0 auto;width:100%}
+.page.wide{max-width:1100px}
+
+/* ─── TOPBAR ─── */
+.topbar{position:sticky;top:env(safe-area-inset-top,0);background:var(--s1);border-bottom:1px solid var(--border);
+  padding:12px 20px;display:flex;align-items:center;gap:12px;z-index:100}
+.topbar-logo{font-family:var(--fh);font-weight:900;font-size:1.1rem;color:var(--gold);white-space:nowrap}
+.topbar-logo span{color:var(--fg)}
+.topbar-user{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--fg2)}
+.topbar-avatar{font-size:1.4rem;line-height:1}
+.topbar-back{background:none;color:var(--fg2);font-size:.85rem;padding:4px 10px;border:1px solid var(--border);
+  border-radius:20px;display:flex;align-items:center;gap:4px}
+.topbar-back:hover{background:var(--s2)}
+
+/* ─── BOTTOM NAV ─── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--s1);
+  border-top:1px solid var(--border);display:flex;z-index:100;
+  padding-bottom:env(safe-area-inset-bottom,0)}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:10px 4px 8px;background:none;color:var(--fg3);font-size:.68rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.04em;border-top:2px solid transparent;transition:all .2s}
+.bnav-btn .bicon{font-size:1.5rem;line-height:1}
+.bnav-btn.active{color:var(--gold);border-top-color:var(--gold)}
+.bnav-btn:hover{color:var(--fg)}
+
+/* ─── CARDS ─── */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px;transition:all .2s}
+.card.interactive:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.card.interactive{cursor:pointer}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:600px){.grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;
+  border-radius:var(--r);font-weight:700;font-size:.95rem;transition:all .18s}
+.btn-gold{background:var(--gold);color:#0D1B2A}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px)}
+.btn-outline{background:transparent;border:2px solid var(--border);color:var(--fg)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{opacity:.9}
+.btn-red{background:var(--red);color:#fff}
+.btn-block{width:100%;margin-top:10px}
+.btn-sm{padding:8px 14px;font-size:.82rem}
+.btn-lg{padding:16px 32px;font-size:1.1rem;border-radius:18px}
+
+/* ─── BADGES / PILLS ─── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;
+  font-size:.75rem;font-weight:700;letter-spacing:.02em}
+.badge-gold{background:var(--gold-bg);color:var(--gold)}
+.badge-green{background:rgba(46,204,138,.15);color:var(--green)}
+.badge-blue{background:rgba(77,159,255,.15);color:var(--blue)}
+.badge-purple{background:rgba(167,139,250,.15);color:var(--purple)}
+.badge-red{background:rgba(255,107,107,.15);color:var(--red)}
+
+/* ─── PROGRESS ─── */
+.progress-bar{background:var(--s2);border-radius:20px;height:8px;overflow:hidden}
+.progress-fill{height:100%;border-radius:20px;background:var(--gold);transition:width .5s ease}
+.progress-fill.green{background:var(--green)}
+.progress-fill.blue{background:var(--blue)}
+
+/* ─── STAT TILES ─── */
+.stat-tile{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;text-align:center}
+.stat-tile .num{font-family:var(--fh);font-size:2rem;font-weight:900;line-height:1.1}
+.stat-tile .lbl{font-size:.75rem;color:var(--fg2);margin-top:4px;text-transform:uppercase;letter-spacing:.05em}
+
+/* ─── LOGIN — COMMAND CENTRE ─── */
+@keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+@keyframes pulse-ring{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.9;transform:scale(1.04)}}
+@keyframes float-in{0%{opacity:0;transform:translateY(22px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes hud-blink{0%,90%,100%{opacity:1}95%{opacity:.3}}
+@keyframes border-glow{0%,100%{box-shadow:0 0 12px rgba(212,175,55,.25),0 0 0 1px rgba(212,175,55,.2)}
+  50%{box-shadow:0 0 28px rgba(212,175,55,.55),0 0 0 1px rgba(212,175,55,.5)}}
+
+.login-page{
+  min-height:100dvh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:20px;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 0%,#0d1a35 0%,#060b18 60%,#020408 100%);
+}
+/* animated grid floor */
+.login-page::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(212,175,55,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(212,175,55,.07) 1px,transparent 1px);
+  background-size:40px 40px;
+  mask-image:radial-gradient(ellipse at 50% 60%,black 30%,transparent 75%);
+  pointer-events:none;
+}
+/* scan line sweep */
+.login-page::after{
+  content:'';position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,.4),transparent);
+  animation:scanline 5s linear infinite;pointer-events:none;
+}
+
+/* ── logo block ── */
+.login-logo{
+  display:flex;align-items:center;gap:14px;margin-bottom:6px;
+  animation:float-in .6s ease both;
+}
+.login-logo-emblem{
+  width:56px;height:56px;border-radius:14px;
+  background:linear-gradient(135deg,#d4af37 0%,#f5c842 50%,#b8860b 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.7rem;font-weight:900;color:#060b18;
+  box-shadow:0 0 32px rgba(212,175,55,.5),0 4px 16px rgba(0,0,0,.6);
+  font-family:var(--fh);letter-spacing:-.02em;flex-shrink:0;
+}
+.login-logo-text{text-align:left}
+.login-logo-text .brand{
+  font-family:var(--fh);font-size:1.55rem;font-weight:900;letter-spacing:.06em;
+  background:linear-gradient(90deg,#f5c842,#d4af37,#ffe680);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;
+}
+.login-logo-text .product{
+  font-size:.72rem;letter-spacing:.18em;color:rgba(212,175,55,.65);
+  text-transform:uppercase;margin-top:2px;font-weight:600;
+}
+
+/* ── hero text ── */
+.login-hero{
+  text-align:center;margin-bottom:28px;
+  animation:float-in .7s .1s ease both;
+}
+.login-hero h1{
+  font-family:var(--fh);font-size:clamp(1.5rem,4vw,2rem);font-weight:900;
+  color:#fff;letter-spacing:-.01em;line-height:1.15;margin-bottom:8px;
+}
+.login-hero h1 em{
+  font-style:normal;
+  background:linear-gradient(90deg,#f5c842,#d4af37);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.login-hero .hud-status{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:.75rem;letter-spacing:.12em;color:rgba(212,175,55,.7);text-transform:uppercase;
+  background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.18);
+  border-radius:100px;padding:5px 14px;
+}
+.hud-dot{width:7px;height:7px;border-radius:50%;background:#2ECC8A;animation:hud-blink 3s infinite;flex-shrink:0}
+
+/* ── profile grid ── */
+.profile-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:14px;
+  width:100%;max-width:500px;
+  animation:float-in .8s .2s ease both;
+}
+
+/* ── profile card ── */
+.profile-card{
+  position:relative;border-radius:18px;cursor:pointer;
+  background:linear-gradient(145deg,rgba(13,26,53,.95),rgba(6,11,24,.98));
+  border:1px solid rgba(212,175,55,.2);
+  padding:20px 14px 16px;text-align:center;
+  transition:transform .25s,border-color .25s,box-shadow .25s;
+  -webkit-tap-highlight-color:transparent;overflow:hidden;
+}
+.profile-card::before{
+  content:'';position:absolute;inset:0;border-radius:18px;
+  background:linear-gradient(145deg,rgba(212,175,55,.06),transparent 60%);
+  pointer-events:none;
+}
+/* corner accent */
+.profile-card::after{
+  content:'';position:absolute;top:0;left:0;width:28px;height:28px;
+  border-top:2px solid rgba(212,175,55,.4);border-left:2px solid rgba(212,175,55,.4);
+  border-radius:18px 0 0 0;pointer-events:none;
+}
+.profile-card:hover{transform:translateY(-3px);border-color:rgba(212,175,55,.5);
+  box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 20px rgba(212,175,55,.15)}
+.profile-card.active{
+  border-color:rgba(212,175,55,.75);transform:none;
+  animation:border-glow 2.5s ease-in-out infinite;
+  background:linear-gradient(145deg,rgba(13,26,53,.98),rgba(6,11,24,1));
+}
+
+/* ── avatar ── */
+.profile-card .avatar{
+  width:72px;height:72px;border-radius:50%;margin:0 auto 10px;
+  overflow:hidden;position:relative;flex-shrink:0;
+  border:2px solid rgba(212,175,55,.3);
+  box-shadow:0 0 18px rgba(212,175,55,.2),0 4px 16px rgba(0,0,0,.5);
+}
+.profile-card .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.profile-card .avatar-emoji{
+  width:72px;height:72px;border-radius:50%;margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:center;font-size:2.6rem;
+  background:rgba(212,175,55,.08);border:2px solid rgba(212,175,55,.2);
+}
+.profile-card .pname{
+  font-family:var(--fh);font-weight:800;font-size:.95rem;color:#fff;
+  letter-spacing:.01em;line-height:1.2;
+}
+.profile-card .pyear{
+  font-size:.72rem;color:rgba(212,175,55,.7);margin-top:4px;
+  letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+}
+.profile-card .access-badge{
+  display:inline-block;margin-top:6px;font-size:.65rem;letter-spacing:.06em;
+  background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);
+  border-radius:100px;padding:2px 10px;color:rgba(212,175,55,.8);
+}
+
+/* ── inline code entry ── */
+.card-code-box{display:none;margin-top:14px;padding-top:12px;border-top:1px solid rgba(212,175,55,.15)}
+.profile-card.active .card-code-box{display:block}
+.card-code-box input{
+  width:100%;padding:11px 8px;box-sizing:border-box;
+  border:1px solid rgba(212,175,55,.3);border-radius:10px;
+  background:rgba(0,0,0,.5);color:#f5c842;
+  text-align:center;font-size:1.05rem;letter-spacing:.35em;
+  text-transform:uppercase;font-family:var(--fh);font-weight:700;
+}
+.card-code-box input::placeholder{color:rgba(212,175,55,.3);letter-spacing:.1em}
+.card-code-box input:focus{outline:none;border-color:rgba(212,175,55,.8);
+  box-shadow:0 0 0 3px rgba(212,175,55,.12);background:rgba(0,0,0,.6)}
+.btn-signin{
+  margin-top:9px;width:100%;padding:11px;
+  background:linear-gradient(135deg,#d4af37,#f5c842);
+  color:#060b18;font-weight:900;border:none;border-radius:10px;
+  cursor:pointer;font-size:.88rem;font-family:var(--fh);letter-spacing:.05em;
+  transition:opacity .15s,box-shadow .15s;
+  box-shadow:0 4px 14px rgba(212,175,55,.35);
+}
+.btn-signin:active{opacity:.85}
+.pin-error{color:#ff6b6b;font-size:.8rem;margin-top:7px;min-height:18px;text-align:center;font-weight:600}
+.pin-box{display:none}
+
+/* ─── DASHBOARD ─── */
+.dash-greeting{margin-bottom:20px}
+.dash-greeting h2{font-size:1.6rem;font-weight:900}
+.dash-greeting p{color:var(--fg2);margin-top:4px}
+.streak-bar{background:var(--gold-bg);border:1px solid rgba(245,166,35,.3);border-radius:var(--r);
+  padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.streak-bar .fire{font-size:1.6rem}
+.streak-bar .stext{flex:1}
+.streak-bar .snum{font-family:var(--fh);font-weight:900;font-size:1.4rem;color:var(--gold)}
+
+/* ─── TIMES TABLES HUB ─── */
+.tt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tt-cell{background:var(--s1);border:2px solid var(--border);border-radius:var(--r);
+  padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.tt-cell:hover{border-color:var(--gold);transform:translateY(-2px)}
+.tt-cell .tn{font-family:var(--fh);font-size:1.5rem;font-weight:900}
+.tt-cell .tp{font-size:.7rem;color:var(--fg2);margin-top:3px}
+.tt-cell .stars{font-size:.9rem;margin-top:4px}
+.tt-cell.mastered{border-color:var(--green)}
+.tt-cell.learning{border-color:var(--gold)}
+@media(max-width:500px){.tt-grid{grid-template-columns:repeat(3,1fr)}}
+
+/* ─── QUIZ / PRACTICE ─── */
+.quiz-wrap{max-width:600px;margin:0 auto}
+.quiz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.quiz-counter{font-size:.85rem;color:var(--fg2)}
+.quiz-score-pill{background:var(--gold-bg);color:var(--gold);padding:4px 12px;border-radius:20px;
+  font-weight:700;font-size:.85rem}
+.quiz-question{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);
+  padding:28px 24px;text-align:center;margin-bottom:18px}
+.quiz-question .qhook{font-size:.85rem;color:var(--fg2);margin-bottom:10px;font-style:italic}
+.quiz-question .qtext{font-family:var(--fh);font-size:1.8rem;font-weight:900;line-height:1.2}
+.quiz-question .qsub{font-size:.9rem;color:var(--fg2);margin-top:8px}
+.answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.ans-btn{background:var(--s2);border:2px solid var(--border);border-radius:var(--r);
+  padding:16px 12px;font-size:1.1rem;font-weight:700;font-family:var(--fh);
+  color:var(--fg);text-align:center;cursor:pointer;transition:all .18s}
+.ans-btn:hover{border-color:var(--blue);background:var(--s3)}
+.ans-btn.correct{background:rgba(46,204,138,.2);border-color:var(--green);color:var(--green)}
+.ans-btn.wrong{background:rgba(255,107,107,.15);border-color:var(--red);color:var(--red)}
+.ans-btn.reveal{background:rgba(46,204,138,.1);border-color:var(--green)}
+.ans-btn:disabled{pointer-events:none}
+
+/* ─── TT INPUT ─── */
+.tt-input-box{display:flex;gap:10px;margin:20px 0;align-items:center;justify-content:center}
+.tt-input{width:120px;padding:14px;border:2px solid var(--border);border-radius:var(--r);
+  background:var(--s1);color:var(--fg);text-align:center;font-size:1.5rem;font-weight:700}
+.tt-input:focus{outline:none;border-color:var(--gold)}
+.tt-input.correct{border-color:var(--green);background:rgba(46,204,138,.1)}
+.tt-input.wrong{border-color:var(--red);background:rgba(255,107,107,.1)}
+
+/* ─── LESSON ─── */
+.lesson-hook{background:var(--gold-bg);border:1px solid rgba(245,166,35,.25);border-radius:var(--r);
+  padding:16px 18px;margin-bottom:18px;font-size:.95rem;line-height:1.6}
+.lesson-hook strong{color:var(--gold)}
+.steps-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.steps-list li{display:flex;gap:12px;background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 16px;font-size:.92rem;line-height:1.5}
+.step-num{background:var(--gold);color:#0D1B2A;border-radius:50%;width:26px;height:26px;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;
+  flex-shrink:0;margin-top:1px}
+.tip-box{background:rgba(77,159,255,.1);border:1px solid rgba(77,159,255,.2);border-radius:var(--r);
+  padding:14px 16px;font-size:.88rem;color:var(--blue);line-height:1.5;margin-bottom:20px}
+
+/* ─── SPEED TIMER ─── */
+.timer-ring{text-align:center;margin-bottom:20px}
+.timer-num{font-family:var(--fh);font-size:3rem;font-weight:900;color:var(--gold)}
+.timer-lbl{font-size:.75rem;color:var(--fg2);text-transform:uppercase;letter-spacing:.08em}
+.speed-score{font-family:var(--fh);font-size:2rem;font-weight:900;text-align:center;color:var(--green)}
+
+/* ─── BATTLE ─── */
+.battle-arena{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.battle-player{background:var(--s1);border:2px solid var(--border);border-radius:var(--rl);
+  padding:16px;text-align:center;transition:all .2s}
+.battle-player.active{border-color:var(--gold);box-shadow:0 0 20px var(--gold-bg)}
+.battle-player .bp-name{font-family:var(--fh);font-weight:900;font-size:1rem;margin-bottom:4px}
+.battle-player .bp-score{font-size:2rem;font-weight:900;color:var(--gold)}
+.battle-player .bp-av{font-size:2rem}
+@media(max-width:480px){.battle-arena{grid-template-columns:1fr;gap:10px}.battle-player{padding:12px}}
+
+/* ─── CHASE ─── */
+.chase-banner{background:linear-gradient(135deg,#1A0A3A,#2D1B5A);border:1px solid rgba(167,139,250,.3);
+  border-radius:var(--rl);padding:24px;text-align:center;margin-bottom:20px}
+.chase-banner h2{color:var(--purple);font-size:1.8rem}
+.chase-banner p{color:var(--fg2);margin-top:6px}
+.chase-card{background:var(--s1);border:2px solid var(--border);border-radius:var(--r);
+  padding:20px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:16px}
+.chase-card:hover{border-color:var(--purple);transform:translateY(-2px)}
+.chase-icon{font-size:2.2rem;flex-shrink:0}
+.chase-card h3{font-family:var(--fh);font-size:1rem;margin-bottom:4px}
+.chase-card p{font-size:.82rem;color:var(--fg2);line-height:1.5}
+
+/* ─── PARENT DASH ─── */
+.parent-child{background:var(--s1);border:1px solid var(--border);border-radius:var(--rl);
+  padding:20px;margin-bottom:16px}
+.parent-child-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.parent-child-header .av{font-size:2rem}
+.parent-child-header h3{font-family:var(--fh);font-weight:900}
+.parent-child-header p{font-size:.8rem;color:var(--fg2)}
+.topic-progress{display:flex;flex-direction:column;gap:8px}
+.tp-row{display:flex;align-items:center;gap:10px;font-size:.83rem}
+.tp-row .label{width:140px;flex-shrink:0;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp-row .bar{flex:1}
+.tp-row .pct{width:32px;text-align:right;font-weight:700;color:var(--fg2)}
+
+/* ─── RESULT ─── */
+.result-box{text-align:center;padding:30px 20px;background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--rl)}
+.result-box .big-emoji{font-size:3.5rem;margin-bottom:10px}
+.result-box h2{font-size:1.6rem}
+.result-box .sub{color:var(--fg2);margin-top:6px}
+.result-score{font-family:var(--fh);font-size:3rem;font-weight:900;color:var(--gold);margin:12px 0}
+.stars-row{font-size:1.8rem;margin:8px 0;letter-spacing:4px}
+
+/* ─── ACHIEVEMENT TOAST ─── */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+  background:var(--s1);border:2px solid var(--gold);border-radius:var(--r);
+  padding:12px 20px;display:flex;align-items:center;gap:10px;
+  box-shadow:var(--shadow);z-index:200;min-width:280px;animation:slideUp .4s ease}
+.toast .ti{font-size:1.5rem}
+.toast .tt-title{font-weight:700;font-size:.9rem;color:var(--gold)}
+.toast .tt-sub{font-size:.78rem;color:var(--fg2)}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ─── SETTINGS ─── */
+.settings-group{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;margin-bottom:16px}
+.settings-group h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.07em;color:var(--fg2);margin-bottom:14px}
+.field-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.field-row label{width:100px;flex-shrink:0;font-size:.85rem;color:var(--fg2)}
+.field-row input{flex:1;padding:9px 12px;background:var(--s2);border:1px solid var(--border);
+  border-radius:8px;color:var(--fg);font-size:.9rem}
+.field-row input:focus{outline:none;border-color:var(--gold)}
+.save-indicator{color:var(--green);font-size:.82rem;margin-top:4px}
+
+/* ─── MISC ─── */
+.section-title{font-size:1.1rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.muted{color:var(--fg2)}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}.mt24{margin-top:24px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+.flex{display:flex}.flex-center{display:flex;align-items:center}.gap8{gap:8px}.gap12{gap:12px}
+.text-center{text-align:center}.fw700{font-weight:700}.fw900{font-weight:900}
+.animate-pop{animation:pop .3s cubic-bezier(.17,.67,.34,1.3)}
+@keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+.correct-flash{animation:correctFlash .5s}
+@keyframes correctFlash{0%{background:rgba(46,204,138,.3)}100%{background:transparent}}
+.no-results{text-align:center;color:var(--fg2);padding:40px 20px}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="boot-err" style="display:none;position:fixed;inset:0;background:#0a0e1a;color:#ffd700;padding:24px;font-family:monospace;font-size:13px;overflow:auto;z-index:9999"></div>
+
+<script>
+// ── BOOT ERROR TRAP ── shows any JS crash on-screen instead of blank page
+window.onerror=function(msg,src,line,col,err){
+  var d=document.getElementById('boot-err');
+  if(d){d.style.display='block';d.innerHTML='<h2 style="color:#ff6b6b">⚠ FONA Boot Error</h2><p><b>'+msg+'</b></p><p>Line '+line+', Col '+col+'</p><pre style="white-space:pre-wrap;color:#ccc">'+(err&&err.stack?err.stack:'no stack')+'</pre>';}
+  return false;
+};
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   FONA Mathematics Intelligence  ·  Complete Learning Platform
+   Users: 2 students + 2 parents  ·  Year 6–11  ·  Times Tables + CHASE
+   Supabase sync: cross-device progress for the whole family
+   ═══════════════════════════════════════════════════════════════════
+
+   SQL — run ONCE in your Supabase SQL editor:
+   ───────────────────────────────────────────
+   create table if not exists fona_profiles (
+     id text primary key,
+     name text not null,
+     avatar text,
+     year_group int,
+     role text not null default 'student',
+     code text not null,
+     color text
+   );
+   create table if not exists fona_progress (
+     id uuid primary key default gen_random_uuid(),
+     profile_id text references fona_profiles(id) on delete cascade,
+     key text not null,
+     data jsonb,
+     updated_at timestamptz default now(),
+     unique(profile_id, key)
+   );
+   create table if not exists fona_achievements (
+     id uuid primary key default gen_random_uuid(),
+     profile_id text references fona_profiles(id) on delete cascade,
+     achievement_id text not null,
+     unlocked_at timestamptz default now(),
+     unique(profile_id, achievement_id)
+   );
+   alter table fona_profiles    disable row level security;
+   alter table fona_progress    disable row level security;
+   alter table fona_achievements disable row level security;
+   ─────────────────────────────────────────── */
+
+// ─── DEFAULT USERS ────────────────────────────────────────────────
+const KIDS_PHOTO='data:image/jpeg;base64,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';
+const DEFAULT_USERS = [
+  {id:'c1',name:'Delight Mamambo',avatar:KIDS_PHOTO,year:9,maxYear:11,role:'student',code:'FONA01',color:'#A78BFA'},
+  {id:'c2',name:'Divine Mamambo', avatar:KIDS_PHOTO,year:6,maxYear:7, role:'student',code:'FONA02',color:'#4D9FFF'},
+  {id:'p1',name:'Dad',            avatar:'👨🏾‍💼',   year:null,maxYear:null,role:'parent',code:'FONA10',color:'#F5A623'},
+  {id:'p2',name:'Mum',            avatar:'👩🏾‍💼',   year:null,maxYear:null,role:'parent',code:'FONA20',color:'#2ECC8A'},
+];
+
+// ─── TIMES TABLE REAL-WORLD HOOKS ─────────────────────────────────
+const TT_HOOKS = {
+  2: "🚲 Every bicycle has 2 wheels. If there are {n} bicycles in the park, how many wheels?",
+  3: "🍀 A shamrock has 3 leaves. How many leaves on {n} shamrocks?",
+  4: "🚗 Each car has 4 wheels. How many wheels on {n} cars?",
+  5: "✋ A hand has 5 fingers. How many fingers on {n} hands?",
+  6: "🥚 Eggs are sold in boxes of 6. How many eggs in {n} boxes?",
+  7: "📅 A week has 7 days. How many days in {n} weeks?",
+  8: "🕷️ A spider has 8 legs. How many legs on {n} spiders?",
+  9: "🎯 A team scores 9 points per round. After {n} rounds, what's the score?",
+  10:"💷 10p coins. If you have {n} coins, how much money?",
+  11:"⚽ A football team has 11 players. How many players in {n} teams?",
+  12:"📦 A dozen = 12. How many items in {n} dozens?",
+};
+
+// ─── CURRICULUM DATA ──────────────────────────────────────────────
+const CURRICULUM = {
+  6:{
+    label:"Year 6", sub:"SATs Preparation", color:"#2ECC8A", icon:"🎯",
+    topics:[
+      {id:"y6-mult",title:"Multiplication & Division",icon:"✖️",lessons:[
+        {id:"y6-m1",title:"Long Multiplication",
+         hook:"🏟️ A stadium has 48 rows with 126 seats each. How many seats total? (48 × 126)",
+         steps:["Set out the calculation: 126 × 48",
+                "Multiply by the ones digit: 126 × 8 = 1,008",
+                "Multiply by the tens digit (add a 0 first): 126 × 40 = 5,040",
+                "Add the two results: 1,008 + 5,040 = 6,048 ✓"],
+         tip:"💡 Add a zero placeholder before the second row — it keeps place values correct.",
+         qs:[{q:"34 × 27",opts:[918,893,952,867],a:918},
+             {q:"56 × 43",opts:[2408,2380,2450,2316],a:2408},
+             {q:"72 × 35",opts:[2520,2460,2580,2430],a:2520},
+             {q:"84 × 26",opts:[2184,2100,2250,2142],a:2184}]},
+        {id:"y6-m2",title:"Short Division (Bus Stop)",
+         hook:"🍕 358 slices of pizza shared equally among 6 tables. How many per table?",
+         steps:["Write as bus stop: 6)358",
+                "How many 6s in 3? Zero — carry the 3",
+                "How many 6s in 35? Five (5×6=30) remainder 5",
+                "Bring down 8 → 58. How many 6s? Nine (9×6=54) remainder 4",
+                "Answer: 59 remainder 4"],
+         tip:"💡 If there's a remainder, write it as r4 or a fraction: 59⁴⁄₆ = 59²⁄₃",
+         qs:[{q:"252 ÷ 4",opts:[63,62,64,61],a:63},
+             {q:"315 ÷ 5",opts:[63,62,64,65],a:63},
+             {q:"432 ÷ 6",opts:[72,71,73,70],a:72},
+             {q:"648 ÷ 8",opts:[81,80,82,79],a:81}]},
+      ]},
+      {id:"y6-frac",title:"Fractions",icon:"½",lessons:[
+        {id:"y6-f1",title:"Adding & Subtracting Fractions",
+         hook:"🍕 You ate 3/8 of a pizza, your brother ate 2/8. How much was eaten altogether?",
+         steps:["Check: do the denominators (bottom) match? Both are 8 ✓",
+                "If they match: just add the numerators (top): 3 + 2 = 5",
+                "Keep the same denominator: answer = 5/8",
+                "If they DON'T match: find the LCM first, then convert"],
+         tip:"💡 For unlike fractions: ¹⁄₃ + ¹⁄₄ → denominator = 12 → ⁴⁄₁₂ + ³⁄₁₂ = ⁷⁄₁₂",
+         qs:[{q:"¼ + ²⁄₄ = ?",opts:["3/4","2/4","1/2","4/4"],a:"3/4"},
+             {q:"⅝ - ³⁄₈ = ?",opts:["2/8","3/8","1/8","4/8"],a:"2/8"},
+             {q:"⅓ + ⅙ = ?",opts:["3/6","2/6","4/6","1/3"],a:"3/6"},
+             {q:"¾ - ¼ = ?",opts:["2/4","1/4","3/4","1/2"],a:"2/4"}]},
+        {id:"y6-f2",title:"Percentages of Amounts",
+         hook:"👟 Trainers cost £80. There's a 25% discount in the sale. How much do you save?",
+         steps:["To find 25% of £80...",
+                "Method: 25% = 25÷100 = 0.25",
+                "0.25 × 80 = £20 saved",
+                "Or: 10% = £8, so 25% = 2×10% + 5% = £16 + £4 = £20 ✓"],
+         tip:"💡 Quick shortcuts: 50% = ÷2, 25% = ÷4, 10% = ÷10, 1% = ÷100",
+         qs:[{q:"20% of £60",opts:["£12","£10","£15","£14"],a:"£12"},
+             {q:"15% of £200",opts:["£30","£25","£35","£20"],a:"£30"},
+             {q:"35% of £80",opts:["£28","£24","£30","£32"],a:"£28"},
+             {q:"75% of 120",opts:[90,80,85,95],a:90}]},
+      ]},
+      {id:"y6-alg",title:"Algebra Basics",icon:"x²",lessons:[
+        {id:"y6-a1",title:"Expressions & Equations",
+         hook:"🛒 Each apple costs n pence. If you buy 5 apples and pay £1.50, what is n?",
+         steps:["Write the equation: 5n = 150",
+                "To find n, divide both sides by 5",
+                "n = 150 ÷ 5 = 30",
+                "So each apple costs 30p ✓"],
+         tip:"💡 Whatever you do to one side of = you must do to the other.",
+         qs:[{q:"3x = 21, find x",opts:[7,6,8,9],a:7},
+             {q:"x + 9 = 14, find x",opts:[5,4,6,3],a:5},
+             {q:"2x - 4 = 10, find x",opts:[7,6,8,5],a:7},
+             {q:"4x = 36, find x",opts:[9,8,10,7],a:9}]},
+      ]},
+      {id:"y6-geo",title:"Geometry & Measures",icon:"📐",lessons:[
+        {id:"y6-g1",title:"Area & Perimeter",
+         hook:"⚽ A football pitch is 100m long and 64m wide. What is its area and perimeter?",
+         steps:["Perimeter = all sides added: 100+64+100+64 = 328m",
+                "Or: 2 × (length + width) = 2 × 164 = 328m",
+                "Area = length × width = 100 × 64 = 6,400m²",
+                "Area is always in square units: m², cm²"],
+         tip:"💡 Perimeter = distance round the edge. Area = space inside.",
+         qs:[{q:"Area of 12cm × 8cm rect?",opts:["96cm²","80cm²","40cm²","104cm²"],a:"96cm²"},
+             {q:"Perimeter of 15m × 7m rect?",opts:["44m","42m","105m","28m"],a:"44m"},
+             {q:"Area of triangle: base 10, height 6?",opts:["30cm²","60cm²","16cm²","20cm²"],a:"30cm²"},
+             {q:"Perimeter of square, side 9cm?",opts:["36cm","27cm","81cm","18cm"],a:"36cm"}]},
+      ]},
+      {id:"y6-stats",title:"Statistics",icon:"📊",lessons:[
+        {id:"y6-s1",title:"Mean, Median, Mode, Range",
+         hook:"📝 Test scores: 7, 4, 9, 6, 4, 8, 7, 7, 5, 3. Find the mean, mode and range.",
+         steps:["MODE = most common value: 7 appears 3 times → Mode = 7",
+                "RANGE = highest - lowest: 9 - 3 = 6",
+                "MEAN = add all ÷ count: (7+4+9+6+4+8+7+7+5+3) = 60 ÷ 10 = 6",
+                "MEDIAN = middle value (sorted): 3,4,4,5,6,7,7,7,8,9 → (6+7)÷2 = 6.5"],
+         tip:"💡 Mean uses all values. Median uses middle. Mode = most frequent.",
+         qs:[{q:"Mean of 2,4,6,8,10",opts:[6,5,7,8],a:6},
+             {q:"Mode of 3,5,5,7,5,3",opts:[5,3,7,4],a:5},
+             {q:"Range of 12,7,19,4,11",opts:[15,12,8,10],a:15},
+             {q:"Median of 1,3,5,7,9",opts:[5,4,6,7],a:5}]},
+      ]},
+    ]
+  },
+  7:{
+    label:"Year 7",sub:"Secondary Start",color:"#4D9FFF",icon:"🚀",
+    topics:[
+      {id:"y7-neg",title:"Negative Numbers",icon:"-",lessons:[
+        {id:"y7-n1",title:"Adding & Subtracting Negatives",
+         hook:"🌡️ Temperature is -3°C. It drops 5°C overnight. What is the new temperature?",
+         steps:["Start at -3 on a number line",
+                "Drop 5 more: -3 - 5 = -8",
+                "Rule: subtracting a positive = move left on the number line",
+                "Answer: -8°C"],
+         tip:"💡 Two minuses make a plus: -(-4) = +4. Think 'double negative = positive'.",
+         qs:[{q:"-5 + 3 = ?",opts:[-2,2,-8,8],a:-2},
+             {q:"-4 - 6 = ?",opts:[-10,10,-2,2],a:-10},
+             {q:"7 - (-3) = ?",opts:[10,4,-10,-4],a:10},
+             {q:"-8 + (-2) = ?",opts:[-10,10,6,-6],a:-10}]},
+      ]},
+      {id:"y7-alg",title:"Algebra",icon:"🔣",lessons:[
+        {id:"y7-a1",title:"Simplifying Expressions",
+         hook:"🎒 You have x books in your bag. You add 3 more, then double everything. Write a simplified expression.",
+         steps:["Start: x books",
+                "Add 3: x + 3",
+                "Double it: 2(x + 3)",
+                "Expand: 2x + 6",
+                "Collect like terms: if you have 3x + 2x + 5, collect x terms → 5x + 5"],
+         tip:"💡 Like terms have the same letter (and power). 3x + 2x = 5x but 3x + 2x² can't be simplified.",
+         qs:[{q:"3x + 2x - x = ?",opts:["4x","5x","3x","6x"],a:"4x"},
+             {q:"2(x + 4) = ?",opts:["2x+8","2x+4","x+8","4x+8"],a:"2x+8"},
+             {q:"5y - 2y + 3 = ?",opts:["3y+3","7y+3","3y","5y+3"],a:"3y+3"},
+             {q:"3(2x-1) = ?",opts:["6x-3","6x-1","3x-3","5x-3"],a:"6x-3"}]},
+      ]},
+      {id:"y7-prob",title:"Probability",icon:"🎲",lessons:[
+        {id:"y7-p1",title:"Basic Probability",
+         hook:"🎲 A fair six-sided die. What's the probability of rolling an even number?",
+         steps:["Count favourable outcomes: even = {2,4,6} = 3 outcomes",
+                "Count total possible outcomes: {1,2,3,4,5,6} = 6",
+                "Probability = favourable ÷ total = 3/6 = ½",
+                "Probability is always between 0 (impossible) and 1 (certain)"],
+         tip:"💡 Write probability as a fraction, decimal or percentage. 1/2 = 0.5 = 50%.",
+         qs:[{q:"P(rolling 3 on a dice)?",opts:["1/6","1/3","1/2","2/6"],a:"1/6"},
+             {q:"P(head on a coin)?",opts:["1/2","1/4","2/3","1/3"],a:"1/2"},
+             {q:"P(picking red from 3R,2B,5G)?",opts:["3/10","2/10","5/10","1/3"],a:"3/10"},
+             {q:"If P(event)=0.3, P(not event)=?",opts:[0.7,0.3,0.6,0.4],a:0.7}]},
+      ]},
+    ]
+  },
+  8:{
+    label:"Year 8",sub:"Building Skills",color:"#F5A623",icon:"⚡",
+    topics:[
+      {id:"y8-eq",title:"Equations",icon:"=",lessons:[
+        {id:"y8-e1",title:"Solving Two-Step Equations",
+         hook:"🛴 You buy n scooters at £85 each plus a £15 delivery fee. Total = £270. Find n.",
+         steps:["Write: 85n + 15 = 270",
+                "Step 1: subtract 15 from both sides → 85n = 255",
+                "Step 2: divide both sides by 85 → n = 3",
+                "Check: 85×3 + 15 = 255 + 15 = 270 ✓"],
+         tip:"💡 Always check your answer by substituting back in.",
+         qs:[{q:"2x + 5 = 17, x = ?",opts:[6,5,7,8],a:6},
+             {q:"3y - 4 = 11, y = ?",opts:[5,4,6,7],a:5},
+             {q:"4z + 3 = 23, z = ?",opts:[5,4,6,3],a:5},
+             {q:"5x - 10 = 15, x = ?",opts:[5,4,6,3],a:5}]},
+      ]},
+      {id:"y8-idx",title:"Indices & Powers",icon:"x²",lessons:[
+        {id:"y8-i1",title:"Laws of Indices",
+         hook:"💻 Computer memory: 2³ = 8 bytes, 2⁴ = 16 bytes. What does 2⁷ equal?",
+         steps:["2¹=2, 2²=4, 2³=8, 2⁴=16, 2⁵=32, 2⁶=64, 2⁷=128",
+                "To multiply same base: xᵃ × xᵇ = xᵃ⁺ᵇ",
+                "Example: 3² × 3³ = 3⁵ = 243",
+                "To divide: xᵃ ÷ xᵇ = xᵃ⁻ᵇ"],
+         tip:"💡 Anything to the power 0 = 1. Anything to the power 1 = itself.",
+         qs:[{q:"3² × 3³ = 3?",opts:["3⁵","3⁶","3²","3⁴"],a:"3⁵"},
+             {q:"2⁴ × 2² = ?",opts:[64,32,16,128],a:64},
+             {q:"5³ = ?",opts:[125,75,25,625],a:125},
+             {q:"4⁰ = ?",opts:[1,0,4,16],a:1}]},
+      ]},
+    ]
+  },
+  9:{
+    label:"Year 9",sub:"GCSE Groundwork",color:"#FF8C42",icon:"🔥",
+    topics:[
+      {id:"y9-quad",title:"Quadratics",icon:"x²",lessons:[
+        {id:"y9-q1",title:"Expanding Double Brackets",
+         hook:"📐 A square lawn has side (x+3)m. Its area = (x+3)(x+3). Expand this.",
+         steps:["Use FOIL: First, Outer, Inner, Last",
+                "(x+3)(x+3): First = x×x = x²",
+                "Outer = x×3 = 3x | Inner = 3×x = 3x",
+                "Last = 3×3 = 9",
+                "Collect: x² + 3x + 3x + 9 = x² + 6x + 9"],
+         tip:"💡 FOIL = Firsts × Firsts, Outers, Inners, Lasts. Then collect like terms.",
+         qs:[{q:"(x+2)(x+3) = ?",opts:["x²+5x+6","x²+6x+6","x²+5x+5","2x²+5x+6"],a:"x²+5x+6"},
+             {q:"(x+4)(x-1) = ?",opts:["x²+3x-4","x²-3x+4","x²+3x+4","x²+4x-4"],a:"x²+3x-4"},
+             {q:"(x+5)² = ?",opts:["x²+10x+25","x²+5x+25","x²+25","x²+10x+5"],a:"x²+10x+25"},
+             {q:"(2x+1)(x+3) = ?",opts:["2x²+7x+3","2x²+6x+3","x²+7x+3","2x²+4x+3"],a:"2x²+7x+3"}]},
+      ]},
+      {id:"y9-trig",title:"Trigonometry Intro",icon:"📐",lessons:[
+        {id:"y9-t1",title:"SOHCAHTOA",
+         hook:"🏗️ A ladder 5m long leans at 60° to the ground. How high up the wall does it reach?",
+         steps:["Identify: opposite = height, hypotenuse = 5m, angle = 60°",
+                "Use SOH: sin(θ) = Opposite / Hypotenuse",
+                "sin(60°) = h / 5",
+                "h = 5 × sin(60°) = 5 × 0.866 = 4.33m"],
+         tip:"💡 SOH-CAH-TOA: Sin=Opp/Hyp, Cos=Adj/Hyp, Tan=Opp/Adj",
+         qs:[{q:"sin(30°) = ?",opts:[0.5,0.866,1,0.707],a:0.5},
+             {q:"cos(60°) = ?",opts:[0.5,0.866,1,0.707],a:0.5},
+             {q:"tan(45°) = ?",opts:[1,0.5,0.866,1.732],a:1},
+             {q:"If sin(θ)=0.5, θ = ?",opts:["30°","45°","60°","90°"],a:"30°"}]},
+      ]},
+    ]
+  },
+  10:{
+    label:"Year 10–11",sub:"GCSE Final Push",color:"#FF6B6B",icon:"🏆",
+    topics:[
+      {id:"y10-quad",title:"Quadratic Equations",icon:"x²",lessons:[
+        {id:"y10-q1",title:"Factorising Quadratics",
+         hook:"🎯 A ball's height: h = x² - 5x + 6 = 0. When does it hit the ground?",
+         steps:["Factorise x² - 5x + 6",
+                "Find two numbers that multiply to 6 and add to -5: (-2) and (-3)",
+                "Write: (x - 2)(x - 3) = 0",
+                "If A×B=0, then A=0 or B=0",
+                "x - 2 = 0 → x = 2, or x - 3 = 0 → x = 3"],
+         tip:"💡 The quadratic formula works for ANY quadratic: x = (-b ± √(b²-4ac)) / 2a",
+         qs:[{q:"Factorise: x²+5x+6",opts:["(x+2)(x+3)","(x+1)(x+6)","(x+2)(x+4)","(x+3)(x+3)"],a:"(x+2)(x+3)"},
+             {q:"Solve: x²-x-6=0",opts:["x=3,x=-2","x=2,x=-3","x=6,x=-1","x=3,x=2"],a:"x=3,x=-2"},
+             {q:"Discriminant b²-4ac for x²-4x+4",opts:[0,4,8,-4],a:0},
+             {q:"Solve: 2x²-8=0, x = ?",opts:["±2","±4","±8","±1"],a:"±2"}]},
+      ]},
+      {id:"y10-cir",title:"Circle Theorems",icon:"⭕",lessons:[
+        {id:"y10-c1",title:"Angles in Circles",
+         hook:"🎡 A Ferris wheel. The angle at the centre is always TWICE the angle at the edge.",
+         steps:["Theorem 1: Angle at centre = 2 × angle at circumference (same arc)",
+                "Theorem 2: Angles in a semicircle = 90°",
+                "Theorem 3: Angles in the same segment are equal",
+                "Theorem 4: Opposite angles in a cyclic quadrilateral add to 180°"],
+         tip:"💡 Always state which theorem you use in your working.",
+         qs:[{q:"Centre angle=80°, circumference angle=?",opts:[40,80,160,20],a:40},
+             {q:"Angle in semicircle = ?",opts:["90°","45°","60°","180°"],a:"90°"},
+             {q:"Cyclic quad: angles 70°+?=180°",opts:[110,90,70,100],a:110},
+             {q:"Two angles, same arc, same segment = ?",opts:["Equal","Supplementary","Complementary","Different"],a:"Equal"}]},
+      ]},
+      {id:"y10-stats",title:"Statistics",icon:"📊",lessons:[
+        {id:"y10-s1",title:"Standard Deviation & Histograms",
+         hook:"📊 Two football teams have the same mean goals (3), but one is more consistent. How do we measure this?",
+         steps:["Standard deviation measures how spread out data is",
+                "Small SD = data is close to the mean (consistent)",
+                "Large SD = data is spread out (variable)",
+                "For histograms: frequency density = frequency ÷ class width"],
+         tip:"💡 In a histogram, it's the AREA of the bar that represents frequency, not the height.",
+         qs:[{q:"Frequency density = frequency ÷ ?",opts:["class width","frequency","mean","total"],a:"class width"},
+             {q:"If SD=0, all values are...?",opts:["Identical","Spread out","Zero","Negative"],a:"Identical"},
+             {q:"Histogram bar: width=5, fd=4, frequency=?",opts:[20,5,9,25],a:20},
+             {q:"Higher SD means data is more...?",opts:["Spread out","Clustered","Accurate","Reliable"],a:"Spread out"}]},
+      ]},
+    ]
+  }
+};
+
+// ─── CHASE BRAIN GAMES ────────────────────────────────────────────
+const CHASE_GAMES = [
+  {id:"logic",name:"Logic Puzzles",icon:"🧩",desc:"Solve brain-teasing logical problems. Think carefully before answering!",color:"#A78BFA",
+   qs:[
+    {q:"I have 3 apples. I give 2 to Sarah, get 1 from James. How many do I have?",opts:[2,1,3,4],a:2},
+    {q:"A clock shows 3:00. What angle do the hands make?",opts:["90°","180°","45°","60°"],a:"90°"},
+    {q:"There are 5 people. Everyone shakes hands once. How many handshakes?",opts:[10,5,20,15],a:10},
+    {q:"If 5 machines make 5 items in 5 minutes, how long for 100 machines to make 100 items?",opts:["5 min","100 min","10 min","50 min"],a:"5 min"},
+    {q:"You overtake the person in 2nd place. What place are you now?",opts:["2nd","1st","3rd","4th"],a:"2nd"},
+    {q:"A snail climbs 3m up a 10m pole per day but slides 2m at night. How many days to escape?",opts:[8,7,10,6],a:8},
+    {q:"Double me, add 6, divide by 2: you get 8. What am I?",opts:[5,6,4,7],a:5},
+    {q:"Two coins total 30p. One is not 20p. What are the coins?",opts:["20p+10p","25p+5p","15p+15p","10p+20p"],a:"20p+10p"},
+   ]},
+  {id:"sequences",name:"Number Patterns",icon:"🔢",desc:"Spot the pattern and find the missing number. Sequences are everywhere in maths!",color:"#4D9FFF",
+   qs:[
+    {q:"2, 4, 8, 16, ___",opts:[32,30,24,20],a:32},
+    {q:"1, 4, 9, 16, ___",opts:[25,20,22,24],a:25},
+    {q:"3, 7, 11, 15, ___",opts:[19,17,20,18],a:19},
+    {q:"1, 1, 2, 3, 5, ___",opts:[8,7,9,6],a:8},
+    {q:"100, 50, 25, 12.5, ___",opts:[6.25,5,10,7.5],a:6.25},
+    {q:"2, 6, 18, 54, ___",opts:[162,108,81,216],a:162},
+    {q:"1, 8, 27, 64, ___",opts:[125,100,81,150],a:125},
+    {q:"5, 10, 20, 40, ___",opts:[80,70,60,50],a:80},
+   ]},
+  {id:"mental",name:"Mental Maths Blitz",icon:"⚡",desc:"Quick-fire mental arithmetic. How fast can your brain work?",color:"#2ECC8A",
+   qs:[
+    {q:"17 + 28 = ?",opts:[45,43,46,44],a:45},
+    {q:"9 × 8 = ?",opts:[72,63,81,64],a:72},
+    {q:"144 ÷ 12 = ?",opts:[12,11,13,14],a:12},
+    {q:"63 - 27 = ?",opts:[36,34,38,32],a:36},
+    {q:"15% of 200 = ?",opts:[30,25,35,20],a:30},
+    {q:"√81 = ?",opts:[9,8,7,10],a:9},
+    {q:"3³ = ?",opts:[27,9,18,81],a:27},
+    {q:"1/4 of 96 = ?",opts:[24,28,22,20],a:24},
+    {q:"0.3 × 0.4 = ?",opts:[0.12,0.12,1.2,0.07],a:0.12},
+    {q:"55 + 46 = ?",opts:[101,99,102,100],a:101},
+   ]},
+  {id:"chase",name:"THE CHASE 🏃",icon:"🏆",desc:"Race against the AI Chaser! Answer faster and correctly to beat them.",color:"#F5A623",
+   qs:[
+    {q:"How many sides does a heptagon have?",opts:[7,6,8,9],a:7},
+    {q:"What is π (pi) to 2 decimal places?",opts:["3.14","3.16","3.12","3.18"],a:"3.14"},
+    {q:"What is the sum of angles in a triangle?",opts:["180°","90°","360°","270°"],a:"180°"},
+    {q:"A prime number is divisible by...",opts:["1 and itself","only 1","any number","2 and itself"],a:"1 and itself"},
+    {q:"Speed = Distance ÷ ?",opts:["Time","Mass","Area","Force"],a:"Time"},
+    {q:"What is ¾ as a decimal?",opts:[0.75,0.34,0.7,0.8],a:0.75},
+    {q:"How many degrees in a full turn?",opts:[360,180,270,90],a:360},
+    {q:"Area of a circle = π × r²? True or False?",opts:["True","False","Sometimes","Only for big circles"],a:"True"},
+   ]},
+];
+
+// ─── ACHIEVEMENTS ─────────────────────────────────────────────────
+const ACHIEVEMENTS = [
+  {id:"first_quiz",icon:"🌟",name:"First Steps",desc:"Complete your first quiz"},
+  {id:"streak_5",icon:"🔥",name:"On Fire!",desc:"Get 5 in a row correct"},
+  {id:"streak_10",icon:"⚡",name:"Unstoppable",desc:"Get 10 in a row correct"},
+  {id:"perfect_quiz",icon:"💯",name:"Perfect Score",desc:"Score 4/4 on a lesson quiz"},
+  {id:"tt_all",icon:"🏆",name:"Times Table Champion",desc:"Complete all 12 tables"},
+  {id:"speed_ace",icon:"🚀",name:"Speed Ace",desc:"Score 15+ in 60s speed challenge"},
+  {id:"battle_won",icon:"⚔️",name:"Battle Champion",desc:"Win a Battle Mode"},
+  {id:"year6_done",icon:"🎓",name:"Year 6 Graduate",desc:"Complete all Year 6 topics"},
+  {id:"chase_master",icon:"🧠",name:"CHASE Master",desc:"Complete all CHASE games"},
+];
+
+// ─── STATE ────────────────────────────────────────────────────────
+const S = {
+  user: null,
+  view: 'login',
+  params: {},
+  quiz: {qs:[],idx:0,score:0,streak:0,maxStreak:0,selected:null,done:false},
+  speed: {active:false,secs:60,score:0,current:null,timer:null},
+  battle: {players:[],scores:[0,0],active:false,round:0,turns:10,current:null,phase:'setup'},
+  chase: {gameId:null,idx:0,score:0,chaserScore:0},
+};
+
+// ─── DATA / STORAGE (localStorage only — no external dependency) ──
+let DATA={users:JSON.parse(JSON.stringify(DEFAULT_USERS)),progress:{},achievements:{}};
+function localSave(){try{localStorage.setItem('fona_maths',JSON.stringify(DATA));}catch(e){}}
+
+function initData(){
+  try{
+    const raw=localStorage.getItem('fona_maths');
+    if(raw){const d=JSON.parse(raw);if(d&&d.users)DATA=d;}
+  }catch(e){}
+  render();
+}
+
+function getUser(id){return DATA.users.find(u=>u.id===id)}
+function getProgress(uid,key){return((DATA.progress[uid]||{})[key])||null}
+function setProgress(uid,key,val){
+  if(!DATA.progress[uid])DATA.progress[uid]={};
+  DATA.progress[uid][key]=val;
+  localSave();
+}
+function getAchievements(uid){return DATA.achievements[uid]||[]}
+function grantAchievement(uid,id){
+  if(!DATA.achievements[uid])DATA.achievements[uid]=[];
+  if(DATA.achievements[uid].includes(id))return false;
+  DATA.achievements[uid].push(id);
+  localSave();
+  const a=ACHIEVEMENTS.find(x=>x.id===id);
+  if(a)showToast(a.icon,a.name,a.desc);
+  return true;
+}
+function getTTProgress(uid,t){return getProgress(uid,`tt_${t}`)||{best:0,done:false}}
+function setTTProgress(uid,t,data){setProgress(uid,`tt_${t}`,data)}
+function getLessonProgress(uid,lid){return getProgress(uid,`l_${lid}`)||null}
+function setLessonProgress(uid,lid,score,total){
+  setProgress(uid,`l_${lid}`,{score,total,pct:Math.round(score/total*100),done:score===total});
+  if(score===total)grantAchievement(uid,'perfect_quiz');
+  grantAchievement(uid,'first_quiz');
+}
+
+// ─── NAV ──────────────────────────────────────────────────────────
+function go(view,params={}){
+  S.view=view;S.params=params;
+  window.scrollTo(0,0);
+  render();
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────
+function el(id){return document.getElementById(id)}
+function shuffle(arr){let a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+function pct(a,b){return b?Math.round(a/b*100):0}
+
+function showToast(icon,title,sub){
+  const old=document.querySelector('.toast');
+  if(old)old.remove();
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerHTML=`<div class="ti">${icon}</div><div><div class="tt-title">${title}</div><div class="tt-sub">${sub}</div></div>`;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+function starRating(pct){
+  if(pct>=100)return '⭐⭐⭐';
+  if(pct>=60)return '⭐⭐';
+  if(pct>=1)return '⭐';
+  return '☆☆☆';
+}
+
+// ─── RENDER: MAIN ─────────────────────────────────────────────────
+function render(){
+  const app=el('app');
+  if(!app)return;
+  if(!S.user){
+    app.innerHTML=renderLogin();
+    bindLogin();
+    return;
+  }
+  const views={
+    dashboard:renderDashboard,
+    tt_hub:renderTTHub,
+    tt_practice:renderTTPractice,
+    tt_speed:renderTTSpeed,
+    tt_battle:renderTTBattle,
+    curriculum:renderCurriculum,
+    year:renderYear,
+    lesson:renderLesson,
+    quiz:renderQuiz,
+    chase:renderChase,
+    chase_game:renderChaseGame,
+    parent:renderParent,
+    settings:renderSettings,
+  };
+  const viewFn=views[S.view]||renderDashboard;
+  app.innerHTML=renderShell(viewFn());
+  bindAll();
+}
+
+function renderShell(content){
+  const u=S.user;
+  const isParent=u.role==='parent';
+  const navItems=isParent?[
+    {id:'parent',icon:'📊',label:'Progress'},
+    {id:'settings',icon:'⚙️',label:'Settings'},
+  ]:[
+    {id:'dashboard',icon:'🏠',label:'Home'},
+    {id:'tt_hub',icon:'✖️',label:'Tables'},
+    {id:'curriculum',icon:'📚',label:'Learn'},
+    {id:'chase',icon:'🧠',label:'CHASE'},
+  ];
+  const backable=['tt_practice','tt_speed','tt_battle','year','lesson','quiz','chase_game','settings'];
+  const backView={tt_practice:'tt_hub',tt_speed:'tt_hub',tt_battle:'tt_hub',
+    year:'curriculum',lesson:'year',quiz:'lesson',chase_game:'chase',settings:'dashboard'};
+  const showBack=backable.includes(S.view);
+  return `
+    <div class="topbar">
+      ${showBack?`<button class="topbar-back" onclick="go('${backView[S.view]||'dashboard'}',${JSON.stringify(S.params)})">◀ Back</button>`:''}
+      <div class="topbar-logo">FONA <span>Maths</span></div>
+      <div class="topbar-user">
+        <span class="topbar-avatar">${u.avatar}</span>
+        <span>${u.name}</span>
+        <button class="topbar-back" style="margin-left:4px" onclick="logout()">Exit</button>
+      </div>
+    </div>
+    <div class="page ${['parent','curriculum'].includes(S.view)?'wide':''}">
+      ${content}
+    </div>
+    <nav class="bottom-nav">
+      ${navItems.map(n=>`<button class="bnav-btn ${S.view===n.id||( n.id==='dashboard'&&S.view==='dashboard')?'active':''}" onclick="go('${n.id}')">
+        <span class="bicon">${n.icon}</span>${n.label}</button>`).join('')}
+      <button class="bnav-btn" onclick="logout()"><span class="bicon">🔓</span>Logout</button>
+    </nav>
+  `;
+}
+
+function logout(){S.user=null;S.view='login';render()}
+
+// ─── VIEW: LOGIN ──────────────────────────────────────────────────
+let loginSelected=null;
+function renderLogin(){
+  loginSelected=null;
+  return `
+  <div class="login-page">
+    <!-- FONA logo -->
+    <div class="login-logo">
+      <div class="login-logo-emblem">F</div>
+      <div class="login-logo-text">
+        <div class="brand">FONA</div>
+        <div class="product">Technologies Ltd</div>
+      </div>
+    </div>
+
+    <div class="login-hero">
+      <h1>Mathematics<br><em>Intelligence</em></h1>
+      <div class="hud-status">
+        <span class="hud-dot"></span>
+        System Online · Select your profile
+      </div>
+    </div>
+
+    <div class="profile-grid" id="profile-grid">
+      ${DATA.users.map(u=>{
+        const isPhoto=u.avatar&&u.avatar.startsWith('data:');
+        const avatarHtml=isPhoto
+          ?`<div class="avatar"><img src="${u.avatar}" alt="${u.name}"></div>`
+          :`<div class="avatar-emoji">${u.avatar}</div>`;
+        const yearLabel=u.role==='parent'?'Parent / Guardian':u.year?`Year ${u.year}`:'Student';
+        const accessLabel=u.maxYear&&u.maxYear!==u.year?`Access: Year ${u.year}–${u.maxYear}`:'';
+        return `
+        <div class="profile-card" id="pc_${u.id}" onclick="selectProfile('${u.id}')">
+          ${avatarHtml}
+          <div class="pname">${u.name}</div>
+          <div class="pyear">${yearLabel}</div>
+          ${accessLabel?`<div class="access-badge">${accessLabel}</div>`:''}
+          <div class="card-code-box">
+            <input type="password" id="pin_${u.id}" placeholder="ACCESS CODE" maxlength="10" autocomplete="off"
+              onclick="event.stopPropagation()" oninput="clearLoginErr('${u.id}')">
+            <div class="pin-error" id="perr_${u.id}"></div>
+            <button class="btn-signin" onclick="event.stopPropagation();doLogin('${u.id}')">AUTHORISE →</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function bindLogin(){
+  DATA.users.forEach(u=>{
+    const inp=el('pin_'+u.id);
+    if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin(u.id)});
+  });
+}
+
+function clearLoginErr(uid){const e=el('perr_'+uid);if(e)e.textContent='';}
+
+function selectProfile(id){
+  loginSelected=id;
+  document.querySelectorAll('.profile-card').forEach(c=>{
+    c.classList.remove('active');
+    const inp=c.querySelector('input[type=password]');
+    if(inp)inp.value='';
+    const err=c.querySelector('.pin-error');
+    if(err)err.textContent='';
+  });
+  const pc=el('pc_'+id);
+  if(pc)pc.classList.add('active');
+  const inp=el('pin_'+id);
+  if(inp)setTimeout(()=>inp.focus(),50);
+}
+
+function doLogin(uid){
+  const id=uid||loginSelected;
+  if(!id)return;
+  const inp=el('pin_'+id);
+  const err=el('perr_'+id);
+  const code=(inp?.value||'').trim().toUpperCase();
+  if(!code){if(err)err.textContent='Please enter your code.';return;}
+  const u=DATA.users.find(x=>x.id===id);
+  if(u&&code===u.code.toUpperCase()){
+    S.user=u;
+    S.view=u.role==='parent'?'parent':'dashboard';
+    render();
+  } else {
+    if(err)err.textContent='Incorrect code. Try again.';
+    if(inp){inp.value='';inp.focus();}
+  }
+}
+
+// ─── VIEW: DASHBOARD ─────────────────────────────────────────────
+function renderDashboard(){
+  const u=S.user;
+  const prog=DATA.progress[u.id]||{};
+  const achs=getAchievements(u.id);
+  const ttDone=Object.keys(prog).filter(k=>k.startsWith('tt_')&&prog[k]?.done).length;
+  const lessDone=Object.keys(prog).filter(k=>k.startsWith('l_')&&prog[k]?.done).length;
+  const streak=parseInt(localStorage.getItem(`streak_${u.id}`)||'0');
+
+  return `
+  <div class="dash-greeting">
+    <h2>${u.avatar&&u.avatar.startsWith('data:')?'':''+u.avatar+' '}Hello, ${u.name}! 👋</h2>
+    <p class="muted">${u.year?`Year ${u.year} — Let\'s sharpen that maths brain!`:'Welcome back — ready to learn?'}</p>
+  </div>
+
+  ${streak>0?`<div class="streak-bar animate-pop">
+    <div class="fire">🔥</div>
+    <div class="stext"><strong>Daily Streak</strong><br><span style="font-size:.82rem;color:var(--fg2)">Keep it going!</span></div>
+    <div class="snum">${streak} day${streak!==1?'s':''}</div>
+  </div>`:''}
+
+  <div class="grid-4 mb16">
+    <div class="stat-tile"><div class="num" style="color:var(--gold)">${ttDone}</div><div class="lbl">Tables Done</div></div>
+    <div class="stat-tile"><div class="num" style="color:var(--green)">${lessDone}</div><div class="lbl">Lessons Done</div></div>
+    <div class="stat-tile"><div class="num" style="color:var(--blue)">${achs.length}</div><div class="lbl">Achievements</div></div>
+    <div class="stat-tile"><div class="num" style="color:var(--purple)">${u.year||'–'}</div><div class="lbl">Year</div></div>
+  </div>
+
+  <div class="section-title">🎯 Quick Access</div>
+  <div class="grid-2 mb20">
+    <div class="card interactive" onclick="go('tt_hub')">
+      <div style="font-size:2rem;margin-bottom:8px">✖️</div>
+      <h3 style="font-family:var(--fh);font-size:1rem">Times Tables</h3>
+      <p style="font-size:.82rem;color:var(--fg2);margin-top:4px">${12-ttDone} tables remaining</p>
+    </div>
+    <div class="card interactive" onclick="go('curriculum')">
+      <div style="font-size:2rem;margin-bottom:8px">📚</div>
+      <h3 style="font-family:var(--fh);font-size:1rem">Curriculum</h3>
+      <p style="font-size:.82rem;color:var(--fg2);margin-top:4px">${u.year?`Year ${u.year} & beyond`:'All year groups'}</p>
+    </div>
+    <div class="card interactive" onclick="go('tt_battle')">
+      <div style="font-size:2rem;margin-bottom:8px">⚔️</div>
+      <h3 style="font-family:var(--fh);font-size:1rem">Battle Mode</h3>
+      <p style="font-size:.82rem;color:var(--fg2);margin-top:4px">Challenge another player!</p>
+    </div>
+    <div class="card interactive" onclick="go('chase')">
+      <div style="font-size:2rem;margin-bottom:8px">🧠</div>
+      <h3 style="font-family:var(--fh);font-size:1rem">CHASE</h3>
+      <p style="font-size:.82rem;color:var(--fg2);margin-top:4px">Brain training games</p>
+    </div>
+  </div>
+
+  ${achs.length>0?`
+  <div class="section-title">🏅 Achievements</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px">
+    ${ACHIEVEMENTS.filter(a=>achs.includes(a.id)).map(a=>`
+      <div style="background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
+        padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:.82rem">
+        <span style="font-size:1.2rem">${a.icon}</span>
+        <span>${a.name}</span>
+      </div>`).join('')}
+  </div>`:''}
+  `;
+}
+
+// ─── VIEW: TIMES TABLES HUB ───────────────────────────────────────
+function renderTTHub(){
+  const uid=S.user.id;
+  return `
+  <div class="section-title mb16">✖️ Times Tables</div>
+  <div class="grid-2 mb20">
+    <button class="btn btn-gold" onclick="go('tt_speed')">⚡ 60-Second Speed Challenge</button>
+    <button class="btn btn-outline" onclick="go('tt_battle')">⚔️ Battle Mode (2 Players)</button>
+  </div>
+  <div class="section-title">Select a Table to Practice</div>
+  <div class="tt-grid">
+    ${Array.from({length:11},(_,i)=>i+2).map(t=>{
+      const p=getTTProgress(uid,t);
+      const cls=p.done?'mastered':p.best>0?'learning':'';
+      const hook=(TT_HOOKS[t]||'').split('.')[0].split('!')[0].substring(0,22)||'Practice';
+      return `<div class="tt-cell ${cls}" onclick="go('tt_practice',{table:${t}})">
+        <div class="tn">×${t}</div>
+        <div class="tp">${hook}...</div>
+        <div class="stars">${starRating(p.best)}</div>
+      </div>`;
+    }).join('')}
+  </div>
+  <p class="muted mt12" style="font-size:.8rem">⭐ = started · ⭐⭐ = good · ⭐⭐⭐ = mastered!</p>
+  `;
+}
+
+// ─── VIEW: TT PRACTICE ────────────────────────────────────────────
+let ttPracticeState={table:2,idx:0,score:0,streak:0,total:12,done:false};
+
+function renderTTPractice(){
+  const t=S.params.table||2;
+  ttPracticeState={table:t,idx:0,score:0,streak:0,total:12,done:false};
+  const hook=TT_HOOKS[t]||'';
+  return `
+  <div class="section-title">✖️ ${t} Times Table</div>
+  <div class="lesson-hook"><strong>Real world:</strong> ${hook.replace('{n}','7')}</div>
+  <div id="tt-practice-area">${renderTTPracticeQ()}</div>
+  `;
+}
+
+function renderTTPracticeQ(){
+  const st=ttPracticeState;
+  if(st.done){
+    const p=pct(st.score,st.total);
+    setTTProgress(S.user.id,st.table,{best:p,done:p>=80});
+    if(p>=80)grantAchievement(S.user.id,'tt_all');
+    return `<div class="result-box animate-pop">
+      <div class="big-emoji">${p>=80?'🏆':p>=50?'👍':'💪'}</div>
+      <h2>${p>=80?'Mastered!':p>=50?'Good Work!':'Keep Practising!'}</h2>
+      <div class="result-score">${st.score}/${st.total}</div>
+      <div class="stars-row">${starRating(p)}</div>
+      <p class="muted">Score: ${p}%</p>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="go('tt_practice',{table:${st.table}})">Try Again</button>
+        <button class="btn btn-outline" onclick="go('tt_hub')">All Tables</button>
+      </div>
+    </div>`;
+  }
+  const n=st.idx+1;
+  const question=`${n} × ${st.table}`;
+  const correct=n*st.table;
+  return `
+  <div class="quiz-header">
+    <span class="quiz-counter">Question ${st.idx+1} of ${st.total}</span>
+    <span class="quiz-score-pill">Score: ${st.score}</span>
+  </div>
+  <div style="margin-bottom:10px"><div class="progress-bar"><div class="progress-fill" style="width:${pct(st.idx,st.total)}%"></div></div></div>
+  <div class="quiz-question">
+    <div class="qhook">${TT_HOOKS[st.table].replace('{n}',n)}</div>
+    <div class="qtext">${question} = ?</div>
+  </div>
+  <div class="tt-input-box">
+    <input type="number" class="tt-input" id="tt-ans" placeholder="?" min="0" max="999" autocomplete="off">
+    <button class="btn btn-gold" onclick="checkTTAns(${correct})">Check ✓</button>
+  </div>
+  <div id="tt-feedback" style="text-align:center;font-size:1rem;min-height:28px"></div>
+  `;
+}
+
+function checkTTAns(correct){
+  const inp=el('tt-ans');
+  const fb=el('tt-feedback');
+  if(!inp)return;
+  const val=parseInt(inp.value);
+  if(isNaN(val)){inp.focus();return;}
+  if(val===correct){
+    inp.className='tt-input correct';
+    if(fb)fb.innerHTML=`<span style="color:var(--green);font-weight:700">✓ Correct! ${correct} 🎉</span>`;
+    ttPracticeState.score++;
+    ttPracticeState.streak++;
+    if(ttPracticeState.streak>=5)grantAchievement(S.user.id,'streak_5');
+    if(ttPracticeState.streak>=10)grantAchievement(S.user.id,'streak_10');
+  } else {
+    inp.className='tt-input wrong';
+    if(fb)fb.innerHTML=`<span style="color:var(--red);font-weight:700">✗ The answer was ${correct}</span>`;
+    ttPracticeState.streak=0;
+  }
+  ttPracticeState.idx++;
+  if(ttPracticeState.idx>=ttPracticeState.total)ttPracticeState.done=true;
+  setTimeout(()=>{
+    const area=el('tt-practice-area');
+    if(area)area.innerHTML=renderTTPracticeQ();
+    const ni=el('tt-ans');
+    if(ni)ni.focus();
+  },900);
+}
+
+// ─── VIEW: TT SPEED ───────────────────────────────────────────────
+function renderTTSpeed(){
+  S.speed={active:false,secs:60,score:0,current:null,timer:null};
+  return `
+  <div class="section-title">⚡ Speed Challenge — 60 Seconds</div>
+  <p class="muted mb16">Answer as many times table questions as you can in 60 seconds. Tap the correct answer fast!</p>
+  <div id="speed-area">
+    <div class="result-box">
+      <div class="big-emoji">⚡</div>
+      <h2>Are you ready?</h2>
+      <p class="muted mt8">60 seconds. Tap the right answer. Go!</p>
+      <button class="btn btn-gold btn-lg mt16" onclick="startSpeed()">START!</button>
+    </div>
+  </div>`;
+}
+
+function startSpeed(){
+  S.speed.active=true;S.speed.score=0;S.speed.secs=60;
+  nextSpeedQ();
+  S.speed.timer=setInterval(()=>{
+    S.speed.secs--;
+    const tc=el('speed-timer');
+    if(tc)tc.textContent=S.speed.secs;
+    if(tc)tc.style.color=S.speed.secs<=10?'var(--red)':'var(--gold)';
+    if(S.speed.secs<=0){
+      clearInterval(S.speed.timer);
+      endSpeed();
+    }
+  },1000);
+}
+
+function nextSpeedQ(){
+  const a=randInt(2,12),b=randInt(1,12),ans=a*b;
+  S.speed.current={a,b,ans};
+  const opts=shuffle([ans,...new Set([ans+randInt(1,4),ans-randInt(1,4),ans+randInt(5,12)])].slice(0,4));
+  const area=el('speed-area');
+  if(!area)return;
+  area.innerHTML=`
+  <div class="timer-ring">
+    <div class="timer-num" id="speed-timer">${S.speed.secs}</div>
+    <div class="timer-lbl">seconds left</div>
+  </div>
+  <div class="speed-score" id="speed-score">${S.speed.score}</div>
+  <p style="text-align:center;color:var(--fg2);font-size:.8rem;margin-bottom:12px">questions answered</p>
+  <div class="quiz-question">
+    <div class="qtext">${a} × ${b} = ?</div>
+  </div>
+  <div class="answer-grid mt12">
+    ${opts.map(o=>`<button class="ans-btn" onclick="speedAns(${o},${ans})">${o}</button>`).join('')}
+  </div>`;
+}
+
+function speedAns(chosen,correct){
+  if(!S.speed.active)return;
+  if(chosen===correct){
+    S.speed.score++;
+    if(S.speed.score>=15)grantAchievement(S.user.id,'speed_ace');
+  }
+  nextSpeedQ();
+  const sc=el('speed-score');
+  if(sc)sc.textContent=S.speed.score;
+}
+
+function endSpeed(){
+  S.speed.active=false;
+  const area=el('speed-area');
+  if(!area)return;
+  const s=S.speed.score;
+  area.innerHTML=`<div class="result-box animate-pop">
+    <div class="big-emoji">${s>=20?'🏆':s>=10?'⭐':'💪'}</div>
+    <h2>${s>=20?'Incredible!':s>=10?'Great Speed!':'Keep Practising!'}</h2>
+    <div class="result-score">${s}</div>
+    <p class="muted">questions in 60 seconds</p>
+    <div style="display:flex;gap:10px;margin-top:16px;justify-content:center">
+      <button class="btn btn-gold" onclick="go('tt_speed')">Play Again</button>
+      <button class="btn btn-outline" onclick="go('tt_hub')">Tables Hub</button>
+    </div>
+  </div>`;
+}
+
+// ─── VIEW: BATTLE MODE ────────────────────────────────────────────
+function renderTTBattle(){
+  if(S.battle.phase==='setup'||S.battle.phase==='done'){
+    return renderBattleSetup();
+  }
+  return renderBattleRound();
+}
+
+function renderBattleSetup(){
+  const students=DATA.users.filter(u=>u.role==='student');
+  const done=S.battle.phase==='done';
+  return `
+  <div class="section-title">⚔️ Battle Mode</div>
+  ${done?`<div class="result-box animate-pop mb16">
+    <div class="big-emoji">🏆</div>
+    <h2>Battle Complete!</h2>
+    <div style="display:flex;justify-content:center;gap:24px;margin:16px 0">
+      ${S.battle.players.map((p,i)=>`<div style="text-align:center">
+        <div style="font-size:2rem">${p.avatar}</div>
+        <div style="font-weight:700">${p.name}</div>
+        <div style="font-size:2rem;color:var(--gold);font-family:var(--fh);font-weight:900">${S.battle.scores[i]}</div>
+      </div>`).join('')}
+    </div>
+    <div style="font-size:1.1rem;font-weight:700;color:var(--green)">
+      ${S.battle.scores[0]>S.battle.scores[1]?`🏅 ${S.battle.players[0].name} Wins!`:
+        S.battle.scores[1]>S.battle.scores[0]?`🏅 ${S.battle.players[1].name} Wins!`:'🤝 It\'s a Draw!'}
+    </div>
+  </div>`:''}
+  <p class="muted mb16">Choose two players and battle on times tables. Take turns answering!</p>
+  <div class="card mb16">
+    <h3 style="font-size:.9rem;margin-bottom:12px;color:var(--fg2)">SELECT PLAYER 1</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      ${DATA.users.map(u=>`<button class="btn btn-outline btn-sm" id="bp1_${u.id}"
+        onclick="setBattlePlayer(1,'${u.id}')">${u.avatar} ${u.name}</button>`).join('')}
+    </div>
+  </div>
+  <div class="card mb16">
+    <h3 style="font-size:.9rem;margin-bottom:12px;color:var(--fg2)">SELECT PLAYER 2</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      ${DATA.users.map(u=>`<button class="btn btn-outline btn-sm" id="bp2_${u.id}"
+        onclick="setBattlePlayer(2,'${u.id}')">${u.avatar} ${u.name}</button>`).join('')}
+    </div>
+  </div>
+  <div id="battle-p1-label" style="color:var(--fg2);font-size:.85rem;margin-bottom:4px"></div>
+  <div id="battle-p2-label" style="color:var(--fg2);font-size:.85rem;margin-bottom:12px"></div>
+  <button class="btn btn-gold btn-block" onclick="startBattle()">⚔️ Start Battle!</button>
+  `;
+}
+
+let bp1=null,bp2=null;
+function setBattlePlayer(num,id){
+  const u=getUser(id);
+  if(num===1){bp1=u;const l=el('battle-p1-label');if(l)l.textContent=`Player 1: ${u.avatar} ${u.name} ✓`}
+  else{bp2=u;const l=el('battle-p2-label');if(l)l.textContent=`Player 2: ${u.avatar} ${u.name} ✓`}
+}
+
+function startBattle(){
+  if(!bp1||!bp2){showToast('⚠️','Select Players','Please choose both players first');return;}
+  if(bp1.id===bp2.id){showToast('⚠️','Different Players','Please choose two different players');return;}
+  S.battle={players:[bp1,bp2],scores:[0,0],active:true,round:0,turns:10,current:null,phase:'playing',currentPlayer:0};
+  nextBattleQ();
+}
+
+function nextBattleQ(){
+  const b=S.battle;
+  if(b.round>=b.turns){endBattle();return;}
+  const a=randInt(2,12),n=randInt(1,12),ans=a*n;
+  b.current={a,n,ans};
+  const cp=b.players[b.currentPlayer];
+  const opts=shuffle([ans,...new Set([ans+randInt(1,5),ans-randInt(1,5),ans+randInt(6,14)])].slice(0,4));
+  const area=el('app');
+  if(!area)return;
+  area.innerHTML=renderShell(`
+  <div class="section-title">⚔️ Battle — Round ${b.round+1}/${b.turns}</div>
+  <div class="battle-arena">
+    ${b.players.map((p,i)=>`<div class="battle-player ${i===b.currentPlayer?'active':''}">
+      <div class="bp-av">${p.avatar}</div>
+      <div class="bp-name">${p.name}</div>
+      <div class="bp-score">${b.scores[i]}</div>
+    </div>`).join('')}
+  </div>
+  <div class="quiz-question">
+    <div class="qhook">${cp.avatar} ${cp.name}'s turn — look away ${b.players[1-b.currentPlayer].name}! 👀</div>
+    <div class="qtext">${a} × ${n} = ?</div>
+  </div>
+  <div class="answer-grid mt12">
+    ${opts.map(o=>`<button class="ans-btn" onclick="battleAns(${o},${ans})">${o}</button>`).join('')}
+  </div>
+  <div style="text-align:center;margin-top:12px;color:var(--fg2);font-size:.82rem">Tap the correct answer!</div>
+  `);
+  bindAll();
+}
+
+function battleAns(chosen,correct){
+  const b=S.battle;
+  const cp=b.currentPlayer;
+  const btns=document.querySelectorAll('.ans-btn');
+  btns.forEach(btn=>{
+    if(parseInt(btn.textContent)===correct)btn.classList.add('reveal');
+    if(parseInt(btn.textContent)===chosen&&chosen!==correct)btn.classList.add('wrong');
+    btn.disabled=true;
+  });
+  if(chosen===correct){
+    b.scores[cp]++;
+    showToast('✅','Correct!',`${b.players[cp].name} scores a point!`);
+    if(b.players[cp].id===S.user?.id)grantAchievement(S.user.id,'battle_won');
+  } else {
+    showToast('❌','Wrong!',`The answer was ${correct}`);
+  }
+  b.round++;
+  b.currentPlayer=1-b.currentPlayer;
+  setTimeout(nextBattleQ,1200);
+}
+
+function endBattle(){
+  S.battle.phase='done';
+  render();
+}
+
+// ─── VIEW: CURRICULUM ─────────────────────────────────────────────
+function renderCurriculum(){
+  const u=S.user;
+  const years=[6,7,8,9,10];
+  return `
+  <div class="section-title mb16">📚 Mathematics Curriculum</div>
+  <p class="muted mb20">Choose your year group. Topics build on each other — start where you need to!</p>
+  <div class="grid-2">
+    ${years.map(y=>{
+      const cy=CURRICULUM[y];
+      const topics=cy.topics;
+      const lessons=topics.flatMap(t=>t.lessons);
+      const done=lessons.filter(l=>getLessonProgress(u.id,l.id)?.done).length;
+      const pctDone=pct(done,lessons.length);
+      return `<div class="card interactive" onclick="go('year',{year:${y}})" style="border-color:${cy.color}22">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span style="font-size:2rem">${cy.icon}</span>
+          <div>
+            <div style="font-family:var(--fh);font-weight:800;font-size:1.05rem">${cy.label}</div>
+            <div style="font-size:.78rem;color:var(--fg2)">${cy.sub}</div>
+          </div>
+          <span class="badge badge-gold" style="margin-left:auto">${pctDone}%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pctDone}%;background:${cy.color}"></div></div>
+        <p style="font-size:.78rem;color:var(--fg2);margin-top:8px">${lessons.length} lessons · ${topics.length} topics</p>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// ─── VIEW: YEAR TOPICS ────────────────────────────────────────────
+function renderYear(){
+  const year=S.params.year;
+  const cy=CURRICULUM[year];
+  if(!cy)return`<p>Year not found</p>`;
+  const u=S.user;
+  return `
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <span style="font-size:2.5rem">${cy.icon}</span>
+    <div><h2 style="font-family:var(--fh)">${cy.label}</h2><p class="muted">${cy.sub}</p></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:16px">
+    ${cy.topics.map(t=>`
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-size:1.5rem">${t.icon}</span>
+        <h3 style="font-family:var(--fh)">${t.title}</h3>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${t.lessons.map(l=>{
+          const prog=getLessonProgress(u.id,l.id);
+          return `<div class="card interactive" style="padding:12px 14px" onclick="go('lesson',{year:${year},lid:'${l.id}'})">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="flex:1">
+                <div style="font-weight:700;font-size:.9rem">${l.title}</div>
+                <div style="font-size:.76rem;color:var(--fg2);margin-top:2px">${l.hook.substring(0,60)}...</div>
+              </div>
+              ${prog?`<span class="badge badge-green">${prog.pct}%</span>`:`<span class="badge" style="background:var(--s2);color:var(--fg2)">New</span>`}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ─── VIEW: LESSON ─────────────────────────────────────────────────
+function findLesson(lid){
+  for(const y of Object.values(CURRICULUM)){
+    for(const t of y.topics){
+      const l=t.lessons.find(x=>x.id===lid);
+      if(l)return l;
+    }
+  }
+  return null;
+}
+
+function renderLesson(){
+  const lid=S.params.lid;
+  const l=findLesson(lid);
+  if(!l)return`<p>Lesson not found</p>`;
+  const prog=getLessonProgress(S.user.id,lid);
+  return `
+  <div style="margin-bottom:16px">
+    <h2 style="font-family:var(--fh)">${l.title}</h2>
+    ${prog?`<span class="badge badge-green mt8">Completed: ${prog.pct}%</span>`:''}
+  </div>
+  <div class="lesson-hook"><strong>Real World:</strong> ${l.hook}</div>
+  <div class="section-title mt16 mb8">📋 Step by Step</div>
+  <ol class="steps-list">
+    ${l.steps.map((s,i)=>`<li><div class="step-num">${i+1}</div><div>${s}</div></li>`).join('')}
+  </ol>
+  <div class="tip-box">${l.tip}</div>
+  <button class="btn btn-gold btn-block" onclick="go('quiz',{lid:'${lid}',year:${S.params.year}})">
+    ✏️ Take the Quiz (${l.qs.length} questions)
+  </button>
+  `;
+}
+
+// ─── VIEW: QUIZ ───────────────────────────────────────────────────
+function renderQuiz(){
+  const lid=S.params.lid;
+  const l=findLesson(lid);
+  if(!l)return`<p>Lesson not found</p>`;
+  S.quiz={qs:l.qs,idx:0,score:0,streak:0,maxStreak:0,lid,selected:null,done:false};
+  return renderQuizQ();
+}
+
+function renderQuizQ(){
+  const q=S.quiz;
+  if(q.done||q.idx>=q.qs.length){
+    setLessonProgress(S.user.id,q.lid,q.score,q.qs.length);
+    const p=pct(q.score,q.qs.length);
+    return `
+    <div class="quiz-wrap">
+      <div class="result-box animate-pop">
+        <div class="big-emoji">${p>=75?'🎉':p>=50?'👍':'💪'}</div>
+        <h2>${p>=100?'Perfect!':p>=75?'Excellent!':p>=50?'Good Effort!':'Keep Going!'}</h2>
+        <div class="result-score">${q.score}/${q.qs.length}</div>
+        <div class="stars-row">${starRating(p)}</div>
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;justify-content:center">
+          <button class="btn btn-gold" onclick="go('quiz',{lid:'${q.lid}',year:${S.params.year}})">Retry</button>
+          <button class="btn btn-outline" onclick="go('lesson',{year:${S.params.year},lid:'${q.lid}'})">Review Lesson</button>
+          <button class="btn btn-outline" onclick="go('year',{year:${S.params.year}})">All Topics</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  const cur=q.qs[q.idx];
+  const opts=cur.opts;
+  return `
+  <div class="quiz-wrap">
+    <div class="quiz-header">
+      <span class="quiz-counter">Question ${q.idx+1} of ${q.qs.length}</span>
+      <span class="quiz-score-pill">${q.score} correct</span>
+    </div>
+    <div class="mb8"><div class="progress-bar"><div class="progress-fill" style="width:${pct(q.idx,q.qs.length)}%"></div></div></div>
+    <div class="quiz-question">
+      <div class="qtext">${cur.q}</div>
+    </div>
+    <div class="answer-grid mt16">
+      ${opts.map(o=>`<button class="ans-btn" onclick="quizAns(this,'${escQ(String(o))}','${escQ(String(cur.a))}')">${o}</button>`).join('')}
+    </div>
+    <div id="quiz-feedback" style="text-align:center;min-height:24px;margin-top:8px;font-size:.9rem"></div>
+    <button class="btn btn-gold btn-block mt12" id="next-btn" style="display:none" onclick="quizNext()">Next Question →</button>
+  </div>`;
+}
+
+function escQ(s){return s.replace(/'/g,"\\'").replace(/"/g,'&quot;')}
+
+function quizAns(btn,chosen,correct){
+  const btns=document.querySelectorAll('.ans-btn');
+  btns.forEach(b=>b.disabled=true);
+  const fb=el('quiz-feedback');
+  const nb=el('next-btn');
+  btns.forEach(b=>{
+    if(b.textContent.trim()===correct)b.classList.add('reveal');
+  });
+  if(chosen===correct){
+    btn.classList.add('correct');
+    S.quiz.score++;
+    S.quiz.streak++;
+    S.quiz.maxStreak=Math.max(S.quiz.streak,S.quiz.maxStreak);
+    if(S.quiz.streak>=5)grantAchievement(S.user.id,'streak_5');
+    if(S.quiz.streak>=10)grantAchievement(S.user.id,'streak_10');
+    if(fb)fb.innerHTML=`<span style="color:var(--green);font-weight:700">✓ Correct! 🎉</span>`;
+  } else {
+    btn.classList.add('wrong');
+    S.quiz.streak=0;
+    if(fb)fb.innerHTML=`<span style="color:var(--red);font-weight:700">✗ The answer was ${correct}</span>`;
+  }
+  if(nb)nb.style.display='flex';
+}
+
+function quizNext(){
+  S.quiz.idx++;
+  const area=document.querySelector('.quiz-wrap');
+  if(area)area.innerHTML=(S.quiz.idx>=S.quiz.qs.length)?renderQuizQ().replace('<div class="quiz-wrap">','').replace(/<\/div>$/,''):renderQuizQ().replace('<div class="quiz-wrap">','').replace(/<\/div>$/,'');
+  // simpler: re-render the whole page
+  const app=el('app');
+  if(app)app.innerHTML=renderShell(renderQuizQ());
+  bindAll();
+}
+
+// ─── VIEW: CHASE ──────────────────────────────────────────────────
+function renderChase(){
+  return `
+  <div class="chase-banner">
+    <h2>🧠 CHASE Brain Academy</h2>
+    <p>Train your brain with puzzles, patterns, and lightning-fast maths</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    ${CHASE_GAMES.map(g=>`
+    <div class="chase-card" onclick="go('chase_game',{gameId:'${g.id}'})" style="border-color:${g.color}33">
+      <div class="chase-icon">${g.icon}</div>
+      <div>
+        <h3 style="color:${g.color}">${g.name}</h3>
+        <p>${g.desc}</p>
+        <p style="font-size:.75rem;color:var(--fg3);margin-top:4px">${g.qs.length} challenges</p>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function renderChaseGame(){
+  const gid=S.params.gameId;
+  const game=CHASE_GAMES.find(g=>g.id===gid);
+  if(!game)return`<p>Game not found</p>`;
+  S.chase={gameId:gid,idx:0,score:0,chaserScore:0};
+  return renderChaseQ(game);
+}
+
+function renderChaseQ(game){
+  if(!game)game=CHASE_GAMES.find(g=>g.id===S.chase.gameId);
+  const c=S.chase;
+  if(c.idx>=game.qs.length){
+    const p=pct(c.score,game.qs.length);
+    grantAchievement(S.user.id,'chase_master');
+    return `<div class="result-box animate-pop">
+      <div class="big-emoji">${game.icon}</div>
+      <h2>${game.name} Complete!</h2>
+      <div class="result-score">${c.score}/${game.qs.length}</div>
+      <p class="muted">${game.id==='chase'?`Chaser scored: ${c.chaserScore}`:''}</p>
+      <div style="display:flex;gap:10px;margin-top:16px;justify-content:center">
+        <button class="btn btn-gold" onclick="go('chase_game',{gameId:'${game.id}'})">Play Again</button>
+        <button class="btn btn-outline" onclick="go('chase')">All Games</button>
+      </div>
+    </div>`;
+  }
+  const cur=game.qs[c.idx];
+  const isChase=game.id==='chase';
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div><h3 style="color:${game.color}">${game.icon} ${game.name}</h3></div>
+    <span class="quiz-score-pill">${c.score}/${game.qs.length}</span>
+  </div>
+  ${isChase?`<div style="display:flex;gap:12px;margin-bottom:12px">
+    <div class="badge badge-blue">You: ${c.score}</div>
+    <div class="badge badge-red">Chaser: ${c.chaserScore}</div>
+  </div>`:''}
+  <div class="mb8"><div class="progress-bar"><div class="progress-fill blue" style="width:${pct(c.idx,game.qs.length)}%;background:${game.color}"></div></div></div>
+  <div class="quiz-question">
+    <div class="qhook">Question ${c.idx+1} of ${game.qs.length}</div>
+    <div class="qtext" style="font-size:1.4rem">${cur.q}</div>
+  </div>
+  <div class="answer-grid mt16">
+    ${cur.opts.map(o=>`<button class="ans-btn" onclick="chaseAns(this,'${escQ(String(o))}','${escQ(String(cur.a))}','${game.id}')">${o}</button>`).join('')}
+  </div>
+  <div id="chase-feedback" style="text-align:center;min-height:24px;margin-top:10px;font-size:.9rem"></div>
+  <button class="btn btn-outline btn-block mt12" id="chase-next" style="display:none" onclick="chaseNext('${game.id}')">Next →</button>
+  `;
+}
+
+function chaseAns(btn,chosen,correct,gameId){
+  const btns=document.querySelectorAll('.ans-btn');
+  btns.forEach(b=>b.disabled=true);
+  btns.forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('reveal');});
+  const fb=el('chase-feedback');
+  const nb=el('chase-next');
+  const isChase=gameId==='chase';
+  if(chosen===correct){
+    btn.classList.add('correct');
+    S.chase.score++;
+    if(fb)fb.innerHTML=`<span style="color:var(--green);font-weight:700">✓ Correct! Beat the Chaser!</span>`;
+  } else {
+    btn.classList.add('wrong');
+    if(isChase)S.chase.chaserScore++;
+    if(fb)fb.innerHTML=`<span style="color:var(--red);font-weight:700">✗ Answer: ${correct}${isChase?' — Chaser got that!':''}</span>`;
+  }
+  if(nb)nb.style.display='flex';
+}
+
+function chaseNext(gameId){
+  S.chase.idx++;
+  const app=el('app');
+  const game=CHASE_GAMES.find(g=>g.id===gameId);
+  if(app)app.innerHTML=renderShell(renderChaseQ(game));
+  bindAll();
+}
+
+// ─── VIEW: PARENT DASHBOARD ───────────────────────────────────────
+function renderParent(){
+  const students=DATA.users.filter(u=>u.role==='student');
+  return `
+  <div class="section-title mb16">📊 Parent Dashboard</div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+    <button class="btn btn-outline btn-sm" onclick="go('settings')">⚙️ Manage Profiles</button>
+  </div>
+  ${students.map(u=>{
+    const prog=DATA.progress[u.id]||{};
+    const achs=getAchievements(u.id);
+    const ttKeys=Object.keys(prog).filter(k=>k.startsWith('tt_'));
+    const ttDone=ttKeys.filter(k=>prog[k]?.done).length;
+    const ttBest=ttKeys.length?Math.round(ttKeys.reduce((s,k)=>s+(prog[k]?.best||0),0)/ttKeys.length):0;
+    const lessonKeys=Object.keys(prog).filter(k=>k.startsWith('l_'));
+    const lessDone=lessonKeys.filter(k=>prog[k]?.done).length;
+
+    const yearStats=Object.entries(CURRICULUM).map(([y,cy])=>{
+      const lessons=cy.topics.flatMap(t=>t.lessons);
+      const done=lessons.filter(l=>getLessonProgress(u.id,l.id)).length;
+      return {label:cy.label,done,total:lessons.length,pct:pct(done,lessons.length),color:cy.color};
+    });
+
+    return `<div class="parent-child">
+      <div class="parent-child-header">
+        <div class="av">${u.avatar}</div>
+        <div><h3>${u.name}</h3><p>Year ${u.year} · ${achs.length} achievements</p></div>
+      </div>
+      <div class="grid-4 mb16">
+        <div class="stat-tile"><div class="num" style="color:var(--gold)">${ttDone}/12</div><div class="lbl">Tables Done</div></div>
+        <div class="stat-tile"><div class="num" style="color:var(--green)">${ttBest}%</div><div class="lbl">TT Avg</div></div>
+        <div class="stat-tile"><div class="num" style="color:var(--blue)">${lessDone}</div><div class="lbl">Lessons</div></div>
+        <div class="stat-tile"><div class="num" style="color:var(--purple)">${achs.length}</div><div class="lbl">Badges</div></div>
+      </div>
+      <div class="section-title" style="font-size:.85rem;margin-bottom:10px">Progress by Year Group</div>
+      <div class="topic-progress">
+        ${yearStats.map(ys=>`<div class="tp-row">
+          <span class="label">${ys.label}</span>
+          <div class="bar"><div class="progress-bar"><div class="progress-fill" style="width:${ys.pct}%;background:${ys.color}"></div></div></div>
+          <span class="pct">${ys.pct}%</span>
+        </div>`).join('')}
+      </div>
+      ${achs.length>0?`<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:6px">
+        ${ACHIEVEMENTS.filter(a=>achs.includes(a.id)).map(a=>`<span class="badge badge-gold">${a.icon} ${a.name}</span>`).join('')}
+      </div>`:'<p style="color:var(--fg3);font-size:.8rem;margin-top:10px">No achievements yet — encourage them to start!</p>'}
+    </div>`;
+  }).join('')}`;
+}
+
+// ─── VIEW: SETTINGS ───────────────────────────────────────────────
+function renderSettings(){
+  return `
+  <div class="section-title mb16">⚙️ Profile Settings</div>
+  <p class="muted mb16">Update names and sign-in codes for each profile.</p>
+  ${DATA.users.map((u,i)=>`
+  <div class="settings-group">
+    <h3>${u.avatar} ${u.name} (${u.role==='parent'?'Parent':u.role})</h3>
+    <div class="field-row"><label>Name</label><input type="text" id="set_name_${u.id}" value="${u.name}"></div>
+    ${u.role==='student'?`<div class="field-row"><label>Year</label><input type="number" id="set_year_${u.id}" value="${u.year}" min="1" max="13"></div>`:''}
+    <div class="field-row"><label>Code</label><input type="password" id="set_code_${u.id}" value="${u.code}" placeholder="Enter new code"></div>
+    <button class="btn btn-gold btn-sm mt8" onclick="saveProfile('${u.id}')">Save Changes</button>
+    <div id="set_saved_${u.id}" class="save-indicator"></div>
+  </div>`).join('')}
+  <div class="settings-group">
+    <h3 style="color:var(--red)">⚠️ Data</h3>
+    <p style="font-size:.85rem;color:var(--fg2);margin-bottom:12px">Reset a child's progress (cannot be undone)</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      ${DATA.users.filter(u=>u.role==='student').map(u=>`
+        <button class="btn btn-outline btn-sm" style="border-color:var(--red);color:var(--red)"
+          onclick="if(confirm('Reset all progress for ${u.name}?')){resetProgress('${u.id}')}">
+          Reset ${u.name}
+        </button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function saveProfile(uid){
+  const u=DATA.users.find(x=>x.id===uid);
+  if(!u)return;
+  const n=el('set_name_'+uid);
+  const c=el('set_code_'+uid);
+  const y=el('set_year_'+uid);
+  if(n)u.name=n.value.trim()||u.name;
+  if(c&&c.value.trim())u.code=c.value.trim().toUpperCase();
+  if(y)u.year=parseInt(y.value)||u.year;
+  if(S.user&&S.user.id===uid)S.user=u;
+  localSave();
+  if(sb)sb.from('fona_profiles').upsert({id:u.id,name:u.name,avatar:u.avatar,year_group:u.year,role:u.role,code:u.code,color:u.color}).then(({error})=>{if(error)console.warn('profile save:',error);});
+  const ind=el('set_saved_'+uid);
+  if(ind){ind.textContent='✓ Saved!';setTimeout(()=>ind.textContent='',2000);}
+}
+
+function resetProgress(uid){
+  DATA.progress[uid]={};
+  DATA.achievements[uid]=[];
+  localSave();
+  if(sb){
+    sb.from('fona_progress').delete().eq('profile_id',uid).then(({error})=>{if(error)console.warn('reset progress:',error);});
+    sb.from('fona_achievements').delete().eq('profile_id',uid).then(({error})=>{if(error)console.warn('reset achievements:',error);});
+  }
+  showToast('🔄','Progress Reset','All progress cleared for this profile');
+  render();
+}
+
+// ─── BIND EVENTS ─────────────────────────────────────────────────
+function bindAll(){
+  // pin-input no longer used (inline per-card inputs handle Enter in bindLogin)
+  // TT answer enter key
+  const ta=el('tt-ans');
+  if(ta)ta.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      const cb=ta.closest('.page')?.querySelector('.btn-gold');
+      if(cb)cb.click();
+    }
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+// Primary boot — fires when DOM is ready
+if(document.readyState==='loading'){
+  window.addEventListener('DOMContentLoaded',()=>initData());
+} else {
+  // DOM already parsed (script is at bottom of body) — boot immediately
+  initData();
+}
+
+// Expose global functions needed by onclick handlers
+Object.assign(window,{
+  go,logout,render,initData,
+  selectProfile,doLogin,clearLoginErr,
+  checkTTAns,startSpeed,speedAns,
+  startBattle,setBattlePlayer,battleAns,
+  quizAns,quizNext,
+  chaseAns,chaseNext,
+  saveProfile,resetProgress,
+  nextSpeedQ,endSpeed,endBattle,
+});
+</script>
+</body>
+</html>
