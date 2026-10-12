@@ -72,6 +72,7 @@ img{max-width:100%}
 .topbar-logo span{color:var(--fg)}
 .topbar-user{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--fg2)}
 .topbar-avatar{font-size:1.4rem;line-height:1}
+.topbar-avatar-img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex-shrink:0}
 .topbar-back{background:none;color:var(--fg2);font-size:.85rem;padding:4px 10px;border:1px solid var(--border);
   border-radius:20px;display:flex;align-items:center;gap:4px}
 .topbar-back:hover{background:var(--s2)}
@@ -958,10 +959,10 @@ function renderShell(content){
   const showBack=backable.includes(S.view);
   return `
     <div class="topbar">
-      ${showBack?`<button class="topbar-back" onclick="go('${backView[S.view]||'dashboard'}',${JSON.stringify(S.params)})">◀ Back</button>`:''}
+      ${showBack?`<button class="topbar-back" onclick="go('${backView[S.view]||'dashboard'}')">◀ Back</button>`:''}
       <div class="topbar-logo">FONA <span>Maths</span></div>
       <div class="topbar-user">
-        <span class="topbar-avatar">${u.avatar}</span>
+        ${u.avatar&&u.avatar.startsWith('data:')?`<img class="topbar-avatar-img" src="${u.avatar}" alt="${u.name}">`:`<span class="topbar-avatar">${u.avatar}</span>`}
         <span>${u.name}</span>
         <button class="topbar-back" style="margin-left:4px" onclick="logout()">Exit</button>
       </div>
