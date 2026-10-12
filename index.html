@@ -1519,7 +1519,7 @@ const BOARD_RENDERERS={
     const W=260,H=200;
     let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
     const chalk=(txt,x,y,opts={})=>{
-      const{size=15,fill='rgba(255,255,255,.9)',anchor='middle',cls='',weight:'400'}=opts;
+      const{size=15,fill='rgba(255,255,255,.9)',anchor='middle',cls='',weight='400'}=opts;
       return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${size}" font-weight="${weight}">${txt}</text>`;
     };
     if(step>=0){
