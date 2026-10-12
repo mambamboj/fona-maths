@@ -2013,14 +2013,14 @@ function renderBattleSetup(){
   <div class="card mb16">
     <h3 style="font-size:.9rem;margin-bottom:12px;color:var(--fg2)">SELECT PLAYER 1</h3>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      ${DATA.users.map(u=>`<button class="btn btn-outline btn-sm" id="bp1_${u.id}"
+      ${students.map(u=>`<button class="btn btn-outline btn-sm" id="bp1_${u.id}"
         onclick="setBattlePlayer(1,'${u.id}')">${u.avatar.startsWith('data:')?`<img src="${u.avatar}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px">`:`<span style="margin-right:4px">${u.avatar}</span>`}${u.name}</button>`).join('')}
     </div>
   </div>
   <div class="card mb16">
     <h3 style="font-size:.9rem;margin-bottom:12px;color:var(--fg2)">SELECT PLAYER 2</h3>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      ${DATA.users.map(u=>`<button class="btn btn-outline btn-sm" id="bp2_${u.id}"
+      ${students.map(u=>`<button class="btn btn-outline btn-sm" id="bp2_${u.id}"
         onclick="setBattlePlayer(2,'${u.id}')">${u.avatar.startsWith('data:')?`<img src="${u.avatar}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px">`:`<span style="margin-right:4px">${u.avatar}</span>`}${u.name}</button>`).join('')}
     </div>
   </div>
@@ -2033,8 +2033,9 @@ function renderBattleSetup(){
 let bp1=null,bp2=null;
 function setBattlePlayer(num,id){
   const u=getUser(id);
-  if(num===1){bp1=u;const l=el('battle-p1-label');if(l)l.textContent=`Player 1: ${u.avatar} ${u.name} ✓`}
-  else{bp2=u;const l=el('battle-p2-label');if(l)l.textContent=`Player 2: ${u.avatar} ${u.name} ✓`}
+  const avTxt=u.avatar.startsWith('data:')?'👤':u.avatar;
+  if(num===1){bp1=u;const l=el('battle-p1-label');if(l)l.textContent=`Player 1: ${avTxt} ${u.name} ✓`}
+  else{bp2=u;const l=el('battle-p2-label');if(l)l.textContent=`Player 2: ${avTxt} ${u.name} ✓`}
 }
 
 function startBattle(){
@@ -2586,7 +2587,7 @@ function renderSettings(){
   <p class="muted mb16">Update names and sign-in codes for each profile.</p>
   ${DATA.users.map((u,i)=>`
   <div class="settings-group">
-    <h3>${u.avatar} ${u.name} (${u.role==='parent'?'Parent':u.role})</h3>
+    <h3>${u.avatar&&u.avatar.startsWith('data:')?`<img src="${u.avatar}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px">`:u.avatar+' '}${u.name} (${u.role==='parent'?'Parent':'Student'})</h3>
     <div class="field-row"><label>Name</label><input type="text" id="set_name_${u.id}" value="${u.name}"></div>
     ${u.role==='student'?`<div class="field-row"><label>Year</label><input type="number" id="set_year_${u.id}" value="${u.year}" min="1" max="13"></div>`:''}
     <div class="field-row"><label>Code</label><input type="password" id="set_code_${u.id}" value="${u.code}" placeholder="Enter new code"></div>
