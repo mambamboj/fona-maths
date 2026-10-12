@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FONA Mathematics Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 /* ═══ FONA Mathematics Intelligence — Design System ═══
    Layout : Full-screen SPA, sticky top nav, card grid content
@@ -405,10 +405,50 @@ img{max-width:100%}
 .we-board-canvas{flex:1;display:flex;align-items:center;justify-content:center;padding:16px}
 .we-board-canvas svg{max-width:100%;overflow:visible}
 /* chalk animation */
-@keyframes chalk-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.chalk-appear{animation:chalk-in .35s ease both}
-@keyframes chalk-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
-.chalk-line{stroke-dasharray:1;stroke-dashoffset:1;animation:chalk-draw .5s ease forwards}
+@keyframes chalk-write{
+  0%{opacity:0;stroke-dashoffset:200;clip-path:inset(0 100% 0 0)}
+  30%{opacity:1}
+  100%{opacity:1;stroke-dashoffset:0;clip-path:inset(0 0% 0 0)}
+}
+@keyframes chalk-in{
+  0%{opacity:0;transform:translateY(6px) scaleX(.85);filter:blur(2px)}
+  60%{opacity:1;filter:blur(0)}
+  100%{opacity:1;transform:translateY(0) scaleX(1)}
+}
+@keyframes chalk-draw{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}
+.chalk-appear{animation:chalk-in .42s cubic-bezier(.22,.68,0,1.2) both}
+.chalk-appear:nth-child(2){animation-delay:.08s}
+.chalk-appear:nth-child(3){animation-delay:.16s}
+.chalk-appear:nth-child(4){animation-delay:.24s}
+.chalk-appear:nth-child(5){animation-delay:.32s}
+.chalk-appear:nth-child(6){animation-delay:.40s}
+.chalk-appear:nth-child(7){animation-delay:.48s}
+.chalk-appear:nth-child(8){animation-delay:.56s}
+.chalk-line{stroke-dasharray:200;stroke-dashoffset:200;animation:chalk-draw .6s ease forwards}
+/* search */
+.search-wrap{position:relative;margin-bottom:18px}
+.search-wrap input{width:100%;padding:12px 16px 12px 42px;background:var(--s1);
+  border:1.5px solid var(--border);border-radius:24px;color:var(--fg);font-size:.95rem;
+  outline:none;transition:border-color .2s;box-sizing:border-box}
+.search-wrap input:focus{border-color:var(--gold)}
+.search-wrap .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  color:var(--fg2);font-size:1rem;pointer-events:none}
+.search-results{background:var(--s1);border:1px solid var(--border);border-radius:14px;
+  overflow:hidden;margin-top:6px;display:none}
+.search-results.open{display:block}
+.sr-item{padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);transition:background .15s}
+.sr-item:last-child{border-bottom:none}
+.sr-item:hover{background:var(--s2)}
+.sr-item .sr-tag{font-size:.7rem;font-weight:800;padding:2px 8px;border-radius:10px;
+  background:var(--gold-bg);color:var(--gold);white-space:nowrap}
+.sr-item .sr-title{font-weight:700;font-size:.9rem}
+.sr-item .sr-sub{font-size:.78rem;color:var(--fg2)}
+/* concept frequency chips in parent dashboard */
+.concept-freq{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cf-chip{padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:700;display:inline-flex;align-items:center;gap:4px}
+.cf-chip.hot{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.cf-chip.cold{background:rgba(255,107,107,.09);color:#ff6b6b;border:1px solid rgba(255,107,107,.2)}
 /* nav dots */
 .we-nav{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px}
 .we-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);
@@ -1408,29 +1448,27 @@ const WORKED_STEPS={
 // Each returns an SVG string for a given step index (0-based)
 const BOARD_RENDERERS={
   times_table:(step)=>{
-    // Show the ×3 table being written out, revealing rows one by one
-    const rows=[];
-    const count=Math.min(step+3,12);
+    // 2-column layout, Caveat handwriting font, reveal row-by-row
+    const show=Math.min(step+1,12);
+    const W=260,H=270,rh=22,colW=128;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
+    svg+=`<text x="${W/2}" y="20" text-anchor="middle" fill="rgba(255,255,255,.35)" font-size="11" font-family="'Space Grotesk',sans-serif" letter-spacing="3">× 3 TABLE</text>`;
     for(let i=1;i<=12;i++){
-      const visible=i<=count;
-      const highlight=i===count;
-      rows.push({i,visible,highlight,result:i*3});
+      if(i>show)break;
+      const col=i<=6?0:1;
+      const row=(i<=6?i-1:i-7);
+      const x=col===0?10:colW+10;
+      const y=30+row*rh;
+      const isCurrent=(i===show);
+      const fill=isCurrent?'#ffd166':'rgba(255,255,255,.82)';
+      const cls=isCurrent?'chalk-appear':'';
+      const sz=isCurrent?20:17;
+      svg+=`<text class="${cls}" x="${x}" y="${y+sz-4}" fill="${fill}" font-size="${sz}">${i} × 3 = <tspan font-weight="700">${i*3}</tspan></text>`;
+      if(isCurrent){
+        svg+=`<rect class="chalk-appear" x="${x-4}" y="${y-3}" width="${colW-14}" height="${rh+1}" rx="5"
+          fill="rgba(255,209,102,.08)" stroke="#ffd166" stroke-width="1.5"/>`;
+      }
     }
-    const rh=20,gap=2,cols=3,W=220,H=280;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
-    svg+=`<text x="110" y="22" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">× 3 TABLE</text>`;
-    rows.forEach((r,idx)=>{
-      if(!r.visible)return;
-      const row=Math.floor(idx/cols),col=idx%cols;
-      const x=10+col*72,y=34+row*(rh+gap);
-      const fill=r.highlight?'#ffd166':'rgba(255,255,255,.75)';
-      const cls=r.highlight?'chalk-appear':'';
-      svg+=`<text class="${cls}" x="${x}" y="${y+14}" fill="${fill}" font-size="13">${r.i} × 3 = <tspan font-weight="900">${r.result}</tspan></text>`;
-    });
-    // highlight box around current
-    const hIdx=count-1,hRow=Math.floor(hIdx/cols),hCol=hIdx%cols;
-    const hx=8+hCol*72,hy=34+hRow*(rh+gap)-2;
-    svg+=`<rect class="chalk-appear" x="${hx-2}" y="${hy}" width="68" height="${rh}" rx="4" fill="rgba(255,209,102,.1)" stroke="#ffd166" stroke-width="1.5"/>`;
     svg+=`</svg>`;
     return svg;
   },
@@ -1438,7 +1476,7 @@ const BOARD_RENDERERS={
   grid_method:(step)=>{
     // 23 × 7 grid method
     const W=240,H=200;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     const chalk=(txt,x,y,opts={})=>{
       const {size=16,fill='rgba(255,255,255,.9)',anchor='middle',cls='',weight='400'}=opts;
       return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${size}" font-weight="${weight}">${txt}</text>`;
@@ -1477,7 +1515,7 @@ const BOARD_RENDERERS={
   column_method:(step)=>{
     // 348 × 6 column multiplication
     const W=220,H=220;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     const chalk=(txt,x,y,opts={})=>{
       const{size=22,fill='rgba(255,255,255,.9)',anchor='middle',cls='',weight='400'}=opts;
       return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${size}" font-weight="${weight}">${txt}</text>`;
@@ -1517,7 +1555,7 @@ const BOARD_RENDERERS={
   mental_strategies:(step)=>{
     // Partitioning number line: 36 × 4
     const W=260,H=200;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     const chalk=(txt,x,y,opts={})=>{
       const{size=15,fill='rgba(255,255,255,.9)',anchor='middle',cls='',weight='400'}=opts;
       return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${size}" font-weight="${weight}">${txt}</text>`;
@@ -1553,7 +1591,7 @@ const BOARD_RENDERERS={
   // Year 0 – Counting
   counting:(step)=>{
     const W=240,H=200;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     const nums=[1,2,3,4,5,6,7,8,9,10];
     const show=Math.min(step+2,10);
     svg+=`<text x="120" y="22" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">COUNT TO 10</text>`;
@@ -1576,7 +1614,7 @@ const BOARD_RENDERERS={
   // Year 1 – Place value tens/ones
   place_value_1:(step)=>{
     const W=240,H=200;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     svg+=`<text x="120" y="20" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">PLACE VALUE</text>`;
     // Tens column
     svg+=`<rect x="20" y="32" width="90" height="36" rx="6" fill="rgba(96,165,250,.15)" stroke="#60a5fa" stroke-width="1.5"/>`;
@@ -1604,7 +1642,7 @@ const BOARD_RENDERERS={
   // Year 2 – Halves and Quarters
   fractions_2:(step)=>{
     const W=240,H=200;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     svg+=`<text x="120" y="20" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">FRACTIONS</text>`;
     const cx=120,cy=105,r=68;
     svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(245,166,35,.12)" stroke="#ffd166" stroke-width="2"/>`;
@@ -1632,7 +1670,7 @@ const BOARD_RENDERERS={
   // Year 3 – Column addition
   column_addition:(step)=>{
     const W=200,H=180;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     svg+=`<text x="100" y="18" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">COLUMN ADDITION</text>`;
     const cx=140;
     if(step>=0){
@@ -1660,7 +1698,7 @@ const BOARD_RENDERERS={
   // Year 4 – Equivalent fractions
   equiv_fractions:(step)=>{
     const W=240,H=210;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     svg+=`<text x="120" y="18" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">EQUIVALENT FRACTIONS</text>`;
     // Bar for 1/2
     if(step>=0){
@@ -1694,7 +1732,7 @@ const BOARD_RENDERERS={
   // Year 5 – Long division (bus stop)
   long_division:(step)=>{
     const W=240,H=170;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     svg+=`<text x="120" y="18" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">BUS STOP ÷</text>`;
     // 196 ÷ 4
     if(step>=0){
@@ -1726,7 +1764,7 @@ const BOARD_RENDERERS={
   // Year 5 – Decimal place value
   decimals:(step)=>{
     const W=260,H=185;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     svg+=`<text x="130" y="18" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">DECIMAL PLACE VALUE</text>`;
     const cols=[{l:'Tens',v:'2',c:'#a78bfa'},{l:'Ones',v:'4',c:'rgba(255,255,255,.85)'},{l:'.',v:'.',c:'#ffd166'},{l:'Tenths',v:'3',c:'#4ade80'},{l:'Hundredths',v:'7',c:'#60a5fa'}];
     const cw=48,startX=6;
@@ -1753,7 +1791,7 @@ const BOARD_RENDERERS={
   // Year 5 – Angles
   angles:(step)=>{
     const W=240,H=200;
-    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Courier New',monospace">`;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
     svg+=`<text x="120" y="18" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">ANGLES</text>`;
     const cx=120,cy=140,r=80;
     // Protractor arc
@@ -1868,8 +1906,58 @@ function setLessonProgress(uid,lid,score,total){
   grantAchievement(uid,'first_quiz');
 }
 
+// ─── CONCEPT VISIT TRACKING ───────────────────────────────────────
+function recordConceptVisit(uid,conceptKey,conceptTitle){
+  if(!uid||!conceptKey)return;
+  const store=getProgress(uid,'concept_visits')||{};
+  if(!store[conceptKey])store[conceptKey]={title:conceptTitle||conceptKey,count:0,last:0,dates:[]};
+  store[conceptKey].count++;
+  store[conceptKey].last=Date.now();
+  const today=new Date().toISOString().slice(0,10);
+  if(!store[conceptKey].dates.includes(today))store[conceptKey].dates.push(today);
+  if(store[conceptKey].dates.length>30)store[conceptKey].dates.shift();
+  setProgress(uid,'concept_visits',store);
+}
+function getConceptVisits(uid){return getProgress(uid,'concept_visits')||{}}
+
+// ─── SEARCH INDEX ─────────────────────────────────────────────────
+function buildSearchIndex(){
+  const items=[];
+  // Curriculum lessons
+  Object.entries(CURRICULUM).forEach(([yr,ydata])=>{
+    ydata.topics.forEach(topic=>{
+      topic.lessons.forEach(l=>{
+        items.push({type:'lesson',tag:`Year ${yr==='0'?'Early':yr}`,title:l.title,sub:topic.name,
+          action:()=>go('lesson',{lid:l.id,year:parseInt(yr)}),key:l.id,yr});
+      });
+    });
+  });
+  // Worked examples
+  Object.entries(WORKED_STEPS).forEach(([k,ex])=>{
+    items.push({type:'method',tag:ex.year,title:ex.title,sub:'Worked Method',
+      action:()=>go('tt_hub'),key:k});
+  });
+  // Times tables
+  for(let t=2;t<=12;t++){
+    items.push({type:'table',tag:'Times Tables',title:`${t} Times Table`,sub:'Practice & Adaptive',
+      action:()=>go('tt_practice',{table:t}),key:`tt_${t}`});
+  }
+  return items;
+}
+let _searchIndex=null;
+function getSearchIndex(){if(!_searchIndex)_searchIndex=buildSearchIndex();return _searchIndex;}
+
 // ─── NAV ──────────────────────────────────────────────────────────
 function go(view,params={}){
+  // Track concept visits when navigating to a lesson or table
+  if(S.user&&S.user.role==='student'){
+    if(view==='lesson'&&params.lid){
+      const l=findLesson(params.lid);
+      if(l)recordConceptVisit(S.user.id,params.lid,l.title);
+    } else if(view==='tt_practice'&&params.table){
+      recordConceptVisit(S.user.id,`tt_${params.table}`,`${params.table} Times Table`);
+    }
+  }
   S.view=view;S.params=params;
   window.scrollTo(0,0);
   render();
@@ -2089,6 +2177,12 @@ function renderDashboard(){
   <div class="dash-greeting">
     <h2>${u.avatar&&u.avatar.startsWith('data:')?'':''+u.avatar+' '}Hello, ${u.name}! 👋</h2>
     <p class="muted">${u.year?`Year ${u.year} — Let\'s sharpen that maths brain!`:'Welcome back — ready to learn?'}</p>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="concept-search" placeholder="Search a topic, e.g. fractions, 7 times table…"
+      oninput="runSearch(this.value)" onfocus="runSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)">
+    <div class="search-results" id="search-results"></div>
   </div>
 
   ${streak>0?`<div class="streak-bar animate-pop">
@@ -3102,6 +3196,54 @@ function renderParent(){
         </div>`;
       })()}
 
+      <!-- Concept Visit Frequency -->
+      ${(()=>{
+        const visits=getConceptVisits(u.id);
+        const entries=Object.entries(visits);
+        if(!entries.length)return`<div style="background:var(--s2);border-radius:14px;padding:16px;text-align:center;margin-bottom:16px;border:1px solid var(--border);color:var(--fg2);font-size:.85rem">
+          🔍 Concept frequency appears here once ${u.name.split(' ')[0]} uses the search bar to explore topics.
+        </div>`;
+        // Sort by count desc
+        const sorted=entries.sort((a,b)=>b[1].count-a[1].count);
+        const top=sorted.slice(0,6);
+        // Find neglected: visited at least once but last visit >14 days ago, or never visited in the search index
+        const now=Date.now();
+        const DAY=86400000;
+        const neglected=sorted.filter(([k,v])=>v.count>0&&(now-v.last)>14*DAY).slice(0,4);
+        // Find unvisited from search index (up to 4 most prominent)
+        const idx=getSearchIndex();
+        const unvisitedKeys=idx.filter(i=>!visits[i.key]).slice(0,4);
+        return`<div style="background:var(--s2);border-radius:14px;padding:18px;margin-bottom:16px;border:1px solid var(--border)">
+          <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fg2);font-weight:700;margin-bottom:14px">🔍 Concept Visits — ${u.name.split(' ')[0]}'s Focus</div>
+          ${top.length>0?`
+          <div style="margin-bottom:14px">
+            <div style="font-size:.78rem;font-weight:800;color:var(--green);margin-bottom:8px">🔥 Most Visited</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              ${top.map(([k,v])=>`<span class="cf-chip hot" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.78rem;font-weight:700;font-family:var(--fh)">
+                ${v.title}<span style="opacity:.7;font-weight:400">×${v.count}</span>
+              </span>`).join('')}
+            </div>
+          </div>`:''}
+          ${neglected.length>0?`
+          <div style="margin-bottom:14px">
+            <div style="font-size:.78rem;font-weight:800;color:var(--red);margin-bottom:8px">❄️ Neglected — not visited in 2+ weeks</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              ${neglected.map(([k,v])=>`<span class="cf-chip cold" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.78rem;font-weight:700;font-family:var(--fh)">
+                ${v.title}<span style="opacity:.7;font-weight:400">${Math.round((now-v.last)/DAY)}d ago</span>
+              </span>`).join('')}
+            </div>
+          </div>`:''}
+          ${unvisitedKeys.length>0?`
+          <div>
+            <div style="font-size:.78rem;font-weight:800;color:var(--fg2);margin-bottom:8px">💤 Never Explored</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              ${unvisitedKeys.map(i=>`<span style="background:var(--s3);border:1px solid var(--border);color:var(--fg2);padding:4px 10px;border-radius:20px;font-size:.78rem;font-weight:600;font-family:var(--fh)">${i.title}</span>`).join('')}
+              ${idx.filter(i=>!visits[i.key]).length>4?`<span style="color:var(--fg3);font-size:.78rem;align-self:center">+ ${idx.filter(i=>!visits[i.key]).length-4} more</span>`:''}
+            </div>
+          </div>`:''}
+        </div>`;
+      })()}
+
       <!-- Achievements -->
       ${achs.length>0
         ?`<div>
@@ -3198,6 +3340,39 @@ if(document.readyState==='loading'){
   initData();
 }
 
+// ─── SEARCH ──────────────────────────────────────────────────────────
+function runSearch(q){
+  const box=document.getElementById('search-results');
+  if(!box)return;
+  q=(q||'').trim().toLowerCase();
+  if(!q){box.classList.remove('open');box.innerHTML='';return;}
+  const idx=getSearchIndex();
+  const hits=idx.filter(item=>{
+    const hay=(item.title+' '+item.sub+' '+(item.tag||'')).toLowerCase();
+    return q.split(/\s+/).every(w=>hay.includes(w));
+  }).slice(0,8);
+  if(!hits.length){
+    box.innerHTML=`<div class="sr-item" style="color:var(--fg2);cursor:default">No results for "<strong>${q}</strong>"</div>`;
+  } else {
+    box.innerHTML=hits.map((h,i)=>`
+      <div class="sr-item" onclick="closeSearch();(${h.action.toString()})()">
+        <span class="sr-tag">${h.tag}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.title}</div>
+          <div style="font-size:.75rem;color:var(--fg2)">${h.sub}</div>
+        </div>
+        <span style="color:var(--fg3);font-size:.85rem">→</span>
+      </div>`).join('');
+  }
+  box.classList.add('open');
+}
+function closeSearch(){
+  const box=document.getElementById('search-results');
+  if(box){box.classList.remove('open');}
+  const inp=document.getElementById('concept-search');
+  if(inp){inp.value='';}
+}
+
 // Expose global functions needed by onclick handlers
 Object.assign(window,{
   go,logout,render,initData,
@@ -3209,6 +3384,7 @@ Object.assign(window,{
   saveProfile,resetProgress,
   nextSpeedQ,endSpeed,endBattle,
   toggleTTSteps,toggleHubSteps,
+  runSearch,closeSearch,
 });
 </script>
 </body>
