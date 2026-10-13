@@ -1979,7 +1979,7 @@ const BOARD_RENDERERS={
   area_perimeter:(step)=>{
     const W=260,H=210;
     let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
-    const chalk=(t,x,y,opts={})=>{const{sz=14,fill='rgba(255,255,255,.88)',anchor='middle',cls='',w:'700'}=opts;return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${sz}" font-weight="${w}">${t}</text>`};
+    const chalk=(t,x,y,opts={})=>{const{sz=14,fill='rgba(255,255,255,.88)',anchor='middle',cls='',w='700'}=opts;return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${sz}" font-weight="${w}">${t}</text>`};
     svg+=chalk('Area & Perimeter',130,16,{sz:11,fill:'rgba(255,255,255,.3)',w:'700'});
     if(step>=0){
       // rectangle: 8×5
