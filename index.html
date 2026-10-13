@@ -604,6 +604,58 @@ img{max-width:100%}
 .field-row input:focus{outline:none;border-color:var(--gold)}
 .save-indicator{color:var(--green);font-size:.82rem;margin-top:4px}
 
+/* ─── FAMILY BOARD GAME ─── */
+@keyframes dice-spin{0%{transform:scale(.8) rotate(-15deg);opacity:0}60%{transform:scale(1.2) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes token-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes sq-glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.5)}}
+@keyframes fade-slide{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:translateY(0)}}
+.board-wrap{background:var(--s1);border:2px solid var(--border);border-radius:24px;padding:14px;margin-bottom:16px}
+.board-svg-wrap{width:100%;overflow:hidden;border-radius:16px}
+.board-svg-wrap svg{width:100%;display:block}
+.board-turn-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:var(--s2);border-radius:16px;margin-bottom:12px;border:2px solid var(--border)}
+.board-turn-bar .player-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0}
+.board-turn-bar .turn-name{font-family:var(--fh);font-weight:900;font-size:1rem}
+.board-turn-bar .turn-pos{font-size:.8rem;color:var(--fg2);margin-left:auto}
+.dice-display{width:64px;height:64px;border-radius:16px;background:var(--s1);
+  border:3px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;font-family:var(--fh);font-weight:900;color:var(--gold);
+  margin:0 auto 12px;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.dice-display.rolling{animation:dice-spin .4s ease both}
+.dice-display:hover:not(.done){border-color:var(--gold);box-shadow:0 6px 20px rgba(245,166,35,.3)}
+.board-players-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.board-player-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;
+  border-radius:50px;border:2px solid;font-size:.82rem;font-weight:800;font-family:var(--fh);transition:all .2s}
+.board-player-chip.active-player{transform:scale(1.08);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.board-q-box{background:var(--s1);border:2px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px;animation:fade-slide .35s ease both}
+.board-q-box .sq-label{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;
+  border-radius:50px;font-size:.75rem;font-weight:800;margin-bottom:12px}
+.board-q-box .q-text{font-family:var(--fh);font-size:1.5rem;font-weight:900;text-align:center;
+  color:var(--fg);margin:10px 0 16px;line-height:1.3}
+.board-q-box .q-hint{background:rgba(77,159,255,.1);border:1px solid rgba(77,159,255,.2);
+  border-radius:12px;padding:10px 14px;font-size:.85rem;color:var(--blue);margin-bottom:12px;line-height:1.5}
+.board-answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.board-feedback{border-radius:16px;padding:14px 16px;margin:10px 0;
+  font-size:.9rem;font-weight:700;line-height:1.5;animation:fade-slide .3s ease both}
+.board-feedback.good{background:rgba(46,204,138,.12);border:2px solid rgba(46,204,138,.3);color:var(--green)}
+.board-feedback.bad{background:rgba(255,107,107,.1);border:2px solid rgba(255,107,107,.25);color:var(--red)}
+.board-feedback.lesson{background:rgba(245,166,35,.1);border:2px solid rgba(245,166,35,.25);color:var(--gold)}
+.board-log{max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.board-log-item{font-size:.78rem;padding:6px 10px;border-radius:8px;background:var(--s2);
+  border-left:3px solid;color:var(--fg2);line-height:1.4}
+.intro-rule{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;
+  background:var(--s2);border-radius:14px;border:1px solid var(--border)}
+.intro-rule .ri{font-size:1.6rem;flex-shrink:0;margin-top:2px}
+.intro-rule p{font-size:.88rem;line-height:1.5;color:var(--fg2)}
+.intro-rule strong{color:var(--fg);display:block;margin-bottom:2px;font-size:.92rem}
+.sq-type-normal{fill:#1a2e4a}
+.sq-type-community{fill:#2d1b5a}
+.sq-type-challenge{fill:#2a2000}
+.sq-type-bonus{fill:#0a2a1a}
+.sq-type-penalty{fill:#2a0a0a}
+.sq-type-start{fill:#0a2240}
+.sq-type-finish{fill:#2a1500}
+
 /* ─── MISC ─── */
 .section-title{font-size:1rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;
   text-transform:uppercase;letter-spacing:.06em;color:var(--fg2)}
@@ -1253,6 +1305,453 @@ const CURRICULUM = {
     ]
   }
 };
+
+// ─── FAMILY BOARD GAME ────────────────────────────────────────────
+const BOARD_SIZE=40;
+const BOARD_COLS=8;
+const BOARD_ROWS=5;
+
+// Special squares: type = community|challenge|bonus|penalty
+const BOARD_SPECIALS={
+  5:{type:'community',label:'🤝 Family Challenge',color:'#A78BFA'},
+  10:{type:'challenge',label:'⭐ Star Challenge +2',color:'#F5A623'},
+  15:{type:'community',label:'🤝 Family Challenge',color:'#A78BFA'},
+  20:{type:'bonus',label:'🎲 Roll Again!',color:'#2ECC8A'},
+  25:{type:'community',label:'🤝 Family Challenge',color:'#A78BFA'},
+  30:{type:'challenge',label:'⭐ Star Challenge +2',color:'#F5A623'},
+  34:{type:'penalty',label:'💫 Oops! Back 3',color:'#FF6B6B'},
+  35:{type:'community',label:'🤝 Family Challenge',color:'#A78BFA'},
+  38:{type:'bonus',label:'🎲 Roll Again!',color:'#2ECC8A'},
+};
+
+const BOARD_PLAYER_COLORS=['#F5A623','#4D9FFF','#2ECC8A','#A78BFA'];
+
+// Questions pool keyed by difficulty: easy (Y1-4), medium (Y5-7), hard (Y8-11), family (all)
+const BQ={
+  easy:[
+    {q:'5 × 6 = ?',opts:[30,25,35,28],a:30},
+    {q:'What is ½ of 48?',opts:[24,22,26,20],a:24},
+    {q:'7 × 8 = ?',opts:[56,54,63,64],a:56},
+    {q:'How many cm in 1 metre?',opts:[100,10,1000,50],a:100},
+    {q:'3 × 9 = ?',opts:[27,24,21,30],a:27},
+    {q:'What is 25% of 40?',opts:[10,8,12,15],a:10},
+    {q:'6 × 7 = ?',opts:[42,36,48,45],a:42},
+    {q:'Round 47 to the nearest 10.',opts:[50,40,45,47],a:50},
+    {q:'12 × 4 = ?',opts:[48,44,52,40],a:48},
+    {q:'What is ¼ of 32?',opts:[8,6,10,4],a:8},
+    {q:'9 × 9 = ?',opts:[81,72,63,90],a:81},
+    {q:'How many days in a week?',opts:[7,8,6,5],a:7},
+  ],
+  medium:[
+    {q:'What is 15% of 60?',opts:[9,6,12,15],a:9},
+    {q:'Solve: n + 13 = 30. n = ?',opts:[17,18,16,15],a:17},
+    {q:'Area of rectangle: 8cm × 5cm = ?',opts:['40cm²','35cm²','45cm²','30cm²'],a:'40cm²'},
+    {q:'What is 2³?',opts:[8,6,9,12],a:8},
+    {q:'3.5 + 2.8 = ?',opts:[6.3,6.1,6.5,6.0],a:6.3},
+    {q:'What fraction of 20 is 5?',opts:['¼','⅕','⅓','½'],a:'¼'},
+    {q:'Perimeter of a square with side 6cm?',opts:['24cm','12cm','30cm','36cm'],a:'24cm'},
+    {q:'0.7 × 0.4 = ?',opts:[0.28,0.7,2.8,0.07],a:0.28},
+    {q:'What is 120 ÷ 8?',opts:[15,14,16,12],a:15},
+    {q:'Express 0.6 as a fraction.',opts:['⅗','½','⅔','¾'],a:'⅗'},
+  ],
+  hard:[
+    {q:'x² − 5x + 6 = 0. One solution is x = ?',opts:[2,3,1,4],a:2},
+    {q:'sin 90° = ?',opts:[1,0,'½','√2'],a:1},
+    {q:'Gradient of line through (0,0) and (4,8)?',opts:[2,4,½,8],a:2},
+    {q:'Expand: (x+3)(x−2)',opts:['x²+x−6','x²−x−6','x²+5x−6','x²+x+6'],a:'x²+x−6'},
+    {q:'√144 = ?',opts:[12,11,13,14],a:12},
+    {q:'What is 2⁵?',opts:[32,16,64,10],a:32},
+    {q:'Circumference of circle, r=7cm (π≈3.14)',opts:['43.96cm','21.98cm','49cm','28cm'],a:'43.96cm'},
+    {q:'Solve: 3x − 7 = 14. x = ?',opts:[7,8,6,9],a:7},
+  ],
+  family:[
+    {q:'How many sides does a hexagon have?',opts:[6,5,7,8],a:6},
+    {q:'What is 10 × 10?',opts:[100,1000,10,110],a:100},
+    {q:'What shape has 3 sides?',opts:['Triangle','Square','Pentagon','Rectangle'],a:'Triangle'},
+    {q:'What is 50 + 50?',opts:[100,90,110,80],a:100},
+    {q:'How many minutes in an hour?',opts:[60,30,90,45],a:60},
+    {q:'Double 15 = ?',opts:[30,25,20,35],a:30},
+    {q:'What is half of 100?',opts:[50,40,60,25],a:50},
+    {q:'Name a 2D shape with 4 equal sides.',opts:['Square','Rectangle','Triangle','Circle'],a:'Square'},
+    {q:'Which is bigger: ½ or ¼?',opts:['½','¼','Equal','Depends'],a:'½'},
+    {q:'What do the angles in a triangle add up to?',opts:['180°','90°','360°','270°'],a:'180°'},
+  ]
+};
+
+// Guided explanations matched to wrong answers
+const BQ_HINTS={
+  easy:['Think of your times tables — count up in groups!','Split the number in half first, then half again.','Use your fingers or count in equal groups.'],
+  medium:['Try substituting your answer back into the equation to check.','Break it into smaller steps — what do you know for sure?','Draw it out — a quick sketch can make it clearer.'],
+  hard:['Look for factors that multiply to give the last term and add to give the middle term.','Use the formula carefully — substitute step by step.','Check your signs — positive and negative can flip the answer.'],
+  family:['Count the sides one by one — point at each one!','Think about it in real life — a clock face, a door...','Everyone give your answer at the same time — 3, 2, 1!'],
+};
+
+function getBoardQuestion(player,squareType){
+  let pool;
+  if(squareType==='community'||squareType==='family'){pool=BQ.family;}
+  else if(!player){pool=BQ.family;}
+  else{
+    const yr=parseInt((player.year||'').replace(/\D/g,''))||0;
+    if(yr>=8)pool=BQ.hard;
+    else if(yr>=5)pool=BQ.medium;
+    else pool=BQ.easy;
+  }
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function getHint(player,squareType){
+  let pool;
+  if(squareType==='community')pool=BQ_HINTS.family;
+  else{
+    const yr=parseInt((player&&player.year||'').replace(/\D/g,''))||0;
+    if(yr>=8)pool=BQ_HINTS.hard;
+    else if(yr>=5)pool=BQ_HINTS.medium;
+    else pool=BQ_HINTS.easy;
+  }
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+// ─── BOARD SVG RENDERER ───────────────────────────────────────────
+function renderBoardSVG(playerPositions){
+  // 8 cols × 5 rows = 40 squares, snake pattern from bottom-left
+  const W=320,H=200,SQ=40;
+  const sqX=(n)=>{
+    const rowFromBottom=Math.floor((n-1)/BOARD_COLS);
+    const col=rowFromBottom%2===0?(n-1)%BOARD_COLS:BOARD_COLS-1-(n-1)%BOARD_COLS;
+    return col*SQ;
+  };
+  const sqY=(n)=>{
+    const rowFromBottom=Math.floor((n-1)/BOARD_COLS);
+    return (BOARD_ROWS-1-rowFromBottom)*SQ;
+  };
+
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="border-radius:12px">`;
+
+  // Draw squares
+  for(let n=1;n<=BOARD_SIZE;n++){
+    const x=sqX(n),y=sqY(n);
+    const sp=BOARD_SPECIALS[n];
+    let fillClass='sq-type-normal';
+    let strokeColor='rgba(255,255,255,.08)';
+    if(n===1){fillClass='sq-type-start';strokeColor='rgba(77,159,255,.5)';}
+    else if(n===BOARD_SIZE){fillClass='sq-type-finish';strokeColor='rgba(245,166,35,.7)';}
+    else if(sp){
+      if(sp.type==='community'){fillClass='sq-type-community';strokeColor='rgba(167,139,250,.4)';}
+      else if(sp.type==='challenge'){fillClass='sq-type-challenge';strokeColor='rgba(245,166,35,.45)';}
+      else if(sp.type==='bonus'){fillClass='sq-type-bonus';strokeColor='rgba(46,204,138,.45)';}
+      else if(sp.type==='penalty'){fillClass='sq-type-penalty';strokeColor='rgba(255,107,107,.45)';}
+    }
+    svg+=`<rect x="${x}" y="${y}" width="${SQ}" height="${SQ}" class="${fillClass}" stroke="${strokeColor}" stroke-width="1" rx="4"/>`;
+
+    // Square number (small)
+    if(n===1||n===BOARD_SIZE||sp){
+      const emoji=n===1?'🚀':n===BOARD_SIZE?'🏆':sp.type==='community'?'🤝':sp.type==='challenge'?'⭐':sp.type==='bonus'?'🎲':'💫';
+      svg+=`<text x="${x+SQ/2}" y="${y+SQ/2-4}" text-anchor="middle" font-size="13" dominant-baseline="middle">${emoji}</text>`;
+      svg+=`<text x="${x+SQ/2}" y="${y+SQ-6}" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.45)" dominant-baseline="middle">${n}</text>`;
+    } else {
+      svg+=`<text x="${x+SQ/2}" y="${y+SQ/2}" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" dominant-baseline="middle">${n}</text>`;
+    }
+  }
+
+  // Player tokens
+  const offsets=[[-9,-9],[9,-9],[-9,9],[9,9]];
+  playerPositions.forEach((pos,i)=>{
+    if(pos<1||pos>BOARD_SIZE)return;
+    const bx=sqX(pos),by=sqY(pos);
+    const [ox,oy]=offsets[i];
+    const cx=bx+SQ/2+ox,cy=by+SQ/2+oy;
+    svg+=`<circle cx="${cx}" cy="${cy}" r="7" fill="${BOARD_PLAYER_COLORS[i]}" stroke="#fff" stroke-width="1.5" opacity=".95"/>`;
+    svg+=`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="7" font-weight="900" fill="#0D1B2A">${i+1}</text>`;
+  });
+
+  svg+='</svg>';
+  return svg;
+}
+
+// ─── BOARD GAME STATE ─────────────────────────────────────────────
+let BG={active:false,players:[],idx:0,phase:'intro',dice:0,question:null,attempts:0,log:[],winner:null};
+
+function boardReset(){
+  BG={active:false,players:[],idx:0,phase:'intro',dice:0,question:null,attempts:0,log:[],winner:null};
+}
+
+function boardSetupPlayers(){
+  // Build players from current DATA.users
+  BG.players=DATA.users.slice(0,4).map((u,i)=>({
+    name:u.name.split(' ')[0],
+    fullName:u.name,
+    avatar:u.avatar,
+    color:BOARD_PLAYER_COLORS[i],
+    pos:1,
+    year:u.year||'',
+    uid:u.id,
+    isParent:u.role==='parent',
+  }));
+  BG.idx=0;
+  BG.phase='roll';
+  BG.log=[];
+  BG.winner=null;
+  BG.active=true;
+}
+
+function boardCurrentPlayer(){return BG.players[BG.idx];}
+
+function boardRollDice(){
+  if(BG.phase!=='roll')return;
+  const d=Math.floor(Math.random()*6)+1;
+  BG.dice=d;
+  const pl=boardCurrentPlayer();
+  const newPos=Math.min(pl.pos+d,BOARD_SIZE);
+  const sp=BOARD_SPECIALS[newPos];
+
+  if(sp&&sp.type==='bonus'){
+    // Roll again — move and then get another roll
+    pl.pos=newPos;
+    BG.log.unshift({name:pl.name,color:pl.color,text:`rolled ${d}, landed on 🎲 Roll Again! (sq ${newPos})`});
+    if(newPos>=BOARD_SIZE){BG.phase='end';BG.winner=pl;}
+    else BG.phase='roll_again';
+    renderBoardView();
+    return;
+  }
+  if(sp&&sp.type==='penalty'){
+    pl.pos=Math.max(1,newPos-3);
+    BG.log.unshift({name:pl.name,color:pl.color,text:`rolled ${d}, hit 💫 penalty — moved to sq ${pl.pos}`});
+    BG.phase='penalty_done';
+    renderBoardView();
+    return;
+  }
+
+  pl.pos=newPos;
+  if(newPos>=BOARD_SIZE){BG.phase='end';BG.winner=pl;renderBoardView();return;}
+
+  // Generate question
+  const squareType=sp?sp.type:'normal';
+  BG.question=getBoardQuestion(sp&&sp.type==='community'?null:pl,squareType);
+  BG.attempts=0;
+  BG.phase='question';
+  BG.log.unshift({name:pl.name,color:pl.color,text:`rolled ${d} → moved to square ${newPos}${sp?' ('+sp.label+')':''}`});
+  renderBoardView();
+}
+
+function boardAnswer(chosen){
+  if(BG.phase!=='question'&&BG.phase!=='retry')return;
+  const pl=boardCurrentPlayer();
+  const q=BG.question;
+  const correct=String(q.a)===String(chosen);
+  BG.attempts++;
+
+  if(correct){
+    const sp=BOARD_SPECIALS[pl.pos];
+    let bonus=0;
+    if(sp&&sp.type==='challenge'){bonus=2;pl.pos=Math.min(BOARD_SIZE,pl.pos+bonus);}
+    BG.log.unshift({name:pl.name,color:pl.color,text:`✓ Correct!${bonus?' +'+bonus+' bonus squares':''} — now on sq ${pl.pos}`});
+    if(pl.pos>=BOARD_SIZE){BG.phase='end';BG.winner=pl;renderBoardView();return;}
+    BG.phase='correct';
+    renderBoardView();
+  } else if(BG.attempts===1){
+    // First wrong: show hint, retry with simpler version
+    BG.phase='hint';
+    renderBoardView();
+  } else {
+    // Second wrong: guided explanation, move back 1
+    pl.pos=Math.max(1,pl.pos-1);
+    BG.log.unshift({name:pl.name,color:pl.color,text:`✗ Answered ${chosen} — moved back to sq ${pl.pos}`});
+    BG.phase='wrong';
+    renderBoardView();
+  }
+}
+
+function boardNext(){
+  BG.idx=(BG.idx+1)%BG.players.length;
+  BG.phase='roll';
+  BG.question=null;
+  BG.dice=0;
+  renderBoardView();
+}
+
+function renderBoardView(){
+  S.view='board_game';
+  const app=el('app');
+  if(app)app.innerHTML=renderShell(renderBoardGameInner());
+  bindAll();
+}
+
+// ─── VIEW: BOARD GAME ─────────────────────────────────────────────
+function renderBoardIntro(){
+  return `
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:3rem;margin-bottom:8px">🎲</div>
+    <h2 style="font-family:var(--fh);font-size:1.6rem;font-weight:900;color:var(--gold)">Mamambo Family<br>Maths Chase</h2>
+    <p style="color:var(--fg2);margin-top:6px;font-size:.9rem">A board game for the whole family — answer maths questions to race to the finish!</p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+    <div class="intro-rule"><div class="ri">🎲</div><div><strong>How to play</strong><p>Take turns to roll the dice. Answer the maths question for your square to stay put. Get it right first time on a ⭐ square and earn 2 bonus spaces!</p></div></div>
+    <div class="intro-rule"><div class="ri">🤝</div><div><strong>Community squares</strong><p>Everyone answers at the same time! Whoever gets it right first shouts it out. All correct = everyone moves 1 space forward.</p></div></div>
+    <div class="intro-rule"><div class="ri">💡</div><div><strong>Guided corrections</strong><p>Wrong first time? You get a hint and a second chance. Wrong twice? Dad or Mum explains the method — then it's the next player's turn.</p></div></div>
+    <div class="intro-rule"><div class="ri">🏆</div><div><strong>Winning</strong><p>First player to reach or pass square 40 wins! Then try the same game with the <strong>physical board</strong> — print it from Settings.</p></div></div>
+  </div>
+
+  <div style="background:var(--s2);border-radius:16px;padding:14px 16px;margin-bottom:20px;border:1px solid var(--border)">
+    <p style="font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--fg2);margin-bottom:10px">Playing today</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${DATA.users.slice(0,4).map((u,i)=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="width:12px;height:12px;border-radius:50%;background:${BOARD_PLAYER_COLORS[i]};flex-shrink:0"></div>
+          <span style="font-weight:800;font-family:var(--fh)">${u.name.split(' ')[0]}</span>
+          <span style="font-size:.78rem;color:var(--fg2);margin-left:auto">${u.role==='parent'?'Parent 👨‍👩':u.year||''}</span>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <button class="btn btn-gold btn-block btn-lg" onclick="boardStartGame()">🎲 Start the Game!</button>
+  <button class="btn btn-outline btn-block mt8" onclick="go('chase')" style="margin-top:10px">← Back to CHASE</button>
+  `;
+}
+
+function renderBoardGameInner(){
+  if(!BG.active)return renderBoardIntro();
+  if(BG.phase==='end')return renderBoardEnd();
+
+  const pl=boardCurrentPlayer();
+  const positions=BG.players.map(p=>p.pos);
+
+  let actionPanel='';
+
+  if(BG.phase==='roll'||BG.phase==='roll_again'){
+    const diceEmoji=['','⚀','⚁','⚂','⚃','⚄','⚅'];
+    actionPanel=`
+      <div style="text-align:center;padding:10px 0">
+        <p style="font-size:.9rem;color:var(--fg2);margin-bottom:12px">${BG.phase==='roll_again'?'🎲 Lucky! Roll again!':'Your turn — tap to roll the dice'}</p>
+        <button class="dice-display${BG.dice?'':''}" onclick="boardRollDice()" style="margin:0 auto 14px;display:flex">
+          ${BG.dice?diceEmoji[BG.dice]:'🎲'}
+        </button>
+        <p style="font-size:.78rem;color:var(--fg2)">on square <strong style="color:var(--fg)">${pl.pos}</strong> of ${BOARD_SIZE}</p>
+      </div>`;
+  }
+
+  if(BG.phase==='question'||BG.phase==='retry'){
+    const q=BG.question;
+    const sp=BOARD_SPECIALS[pl.pos];
+    const sqLabel=sp?`<span class="sq-label" style="background:${sp.color}22;color:${sp.color};border:1px solid ${sp.color}55">${sp.label}</span>`:'';
+    actionPanel=`
+      <div class="board-q-box">
+        ${sqLabel}
+        <p style="font-size:.78rem;color:var(--fg2);margin-bottom:4px">${sp&&sp.type==='community'?'🤝 Everyone answers!':'Question for '+pl.name}</p>
+        <div class="q-text">${q.q}</div>
+        <div class="board-answer-grid">
+          ${q.opts.map(o=>`<button class="ans-btn" onclick="boardAnswer('${escQ(String(o))}')">${o}</button>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  if(BG.phase==='hint'){
+    const q=BG.question;
+    const hint=getHint(pl,BOARD_SPECIALS[pl.pos]?BOARD_SPECIALS[pl.pos].type:'normal');
+    actionPanel=`
+      <div class="board-q-box">
+        <div class="board-feedback bad">✗ Not quite — here's a hint!</div>
+        <div class="q-hint">💡 ${hint}</div>
+        <div class="q-text">${q.q}</div>
+        <div class="board-answer-grid">
+          ${q.opts.map(o=>`<button class="ans-btn" onclick="boardAnswer('${escQ(String(o))}')">${o}</button>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  if(BG.phase==='correct'){
+    const sp=BOARD_SPECIALS[pl.pos];
+    actionPanel=`
+      <div class="board-feedback good" style="text-align:center">
+        ✓ Brilliant, ${pl.name}! 🎉${sp&&sp.type==='challenge'?' +2 bonus squares! ⭐':''}
+      </div>
+      <button class="btn btn-gold btn-block mt8" onclick="boardNext()">Next player →</button>`;
+  }
+
+  if(BG.phase==='wrong'){
+    const q=BG.question;
+    actionPanel=`
+      <div class="board-feedback bad">✗ The answer was <strong>${q.a}</strong> — moved back 1 space.</div>
+      <div class="board-feedback lesson">
+        📖 <strong>How to work it out:</strong><br>${getHint(pl,BOARD_SPECIALS[pl.pos]?BOARD_SPECIALS[pl.pos].type:'normal')} The answer is <strong>${q.a}</strong>.
+      </div>
+      <button class="btn btn-gold btn-block mt8" onclick="boardNext()">Next player →</button>`;
+  }
+
+  if(BG.phase==='penalty_done'){
+    actionPanel=`
+      <div class="board-feedback bad" style="text-align:center">💫 Oops — penalty square! Moved back 3 spaces.</div>
+      <button class="btn btn-gold btn-block mt8" onclick="boardNext()">Next player →</button>`;
+  }
+
+  return `
+  <div class="board-turn-bar">
+    <div class="player-dot" style="background:${pl.color}"></div>
+    <div class="turn-name">${pl.name}'s Turn</div>
+    <div class="turn-pos">Sq ${pl.pos}/${BOARD_SIZE}</div>
+  </div>
+
+  <div class="board-players-row">
+    ${BG.players.map((p,i)=>`
+      <div class="board-player-chip${i===BG.idx?' active-player':''}" style="border-color:${p.color}66;color:${p.color};background:${p.color}15">
+        ${p.name} <span style="font-size:.7rem;opacity:.7">sq ${p.pos}</span>
+      </div>`).join('')}
+  </div>
+
+  <div class="board-svg-wrap board-wrap">
+    ${renderBoardSVG(positions)}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;padding:8px 4px 4px;justify-content:center">
+      <span style="font-size:.68rem;color:var(--fg2)">🚀 Start</span>
+      <span style="font-size:.68rem;color:#A78BFA">🤝 Family</span>
+      <span style="font-size:.68rem;color:var(--gold)">⭐ Challenge</span>
+      <span style="font-size:.68rem;color:var(--green)">🎲 Bonus Roll</span>
+      <span style="font-size:.68rem;color:var(--red)">💫 Penalty</span>
+      <span style="font-size:.68rem;color:var(--gold)">🏆 Finish</span>
+    </div>
+  </div>
+
+  ${actionPanel}
+
+  ${BG.log.length?`
+  <div style="margin-top:14px">
+    <p style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--fg3);margin-bottom:6px">Game Log</p>
+    <div class="board-log">
+      ${BG.log.slice(0,8).map(l=>`<div class="board-log-item" style="border-left-color:${l.color}">${l.name}: ${l.text}</div>`).join('')}
+    </div>
+  </div>`:''}
+  `;
+}
+
+function renderBoardEnd(){
+  const w=BG.winner;
+  return `
+  <div class="result-box animate-pop" style="margin-top:20px">
+    <div class="big-emoji">🏆</div>
+    <h2>${w?w.name+' Wins!':'Game Over!'}</h2>
+    <p class="muted mt8">What a game! Mathematics champions in the Mamambo house! 🎉</p>
+    <div style="margin:20px 0;padding:16px;background:var(--s2);border-radius:16px;border:1px solid var(--border)">
+      <p style="font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--fg2);margin-bottom:10px">Final Positions</p>
+      ${BG.players.map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;font-weight:800">
+        <div style="width:10px;height:10px;border-radius:50%;background:${p.color}"></div>
+        <span>${p.name}</span>
+        <span style="margin-left:auto;color:var(--fg2);font-size:.85rem">Square ${p.pos}</span>
+      </div>`).join('')}
+    </div>
+    <div style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);border-radius:14px;padding:14px;margin-bottom:16px;text-align:left">
+      <p style="font-size:.85rem;font-weight:700;color:var(--gold)">🖨️ Ready for the physical board?</p>
+      <p style="font-size:.82rem;color:var(--fg2);margin-top:6px;line-height:1.5">Print the FONA Maths Chase board from Settings — same squares, same rules, same family fun. No screens needed!</p>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-gold" onclick="boardStartGame()">🎲 Play Again</button>
+      <button class="btn btn-outline" onclick="go('chase')">← CHASE Hub</button>
+    </div>
+  </div>`;
+}
+
+function boardStartGame(){
+  boardSetupPlayers();
+  renderBoardView();
+}
 
 // ─── CHASE BRAIN GAMES ────────────────────────────────────────────
 const CHASE_GAMES = [
@@ -2270,6 +2769,7 @@ function render(){
     quiz:renderQuiz,
     chase:renderChase,
     chase_game:renderChaseGame,
+    board_game:()=>renderBoardGameInner(),
     parent:renderParent,
     settings:renderSettings,
   };
@@ -2299,6 +2799,7 @@ function renderShell(content){
     lesson:       {view:'year',      params:{year:S.params.year}},
     quiz:         {view:'lesson',    params:{year:S.params.year,lid:S.params.lid}},
     chase_game:   {view:'chase',     params:{}},
+    board_game:   {view:'chase',     params:{}},
     settings:     {view:'dashboard', params:{}},
   };
   const back=backMap[S.view];
@@ -3273,6 +3774,14 @@ function renderChase(){
     <p>Train your brain with puzzles, patterns, and lightning-fast maths</p>
   </div>
   <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="chase-card" onclick="go('board_game',{})" style="border-color:#F5A62333;cursor:pointer">
+      <div class="chase-icon">🎲</div>
+      <div>
+        <h3 style="color:#F5A623">Family Board Game</h3>
+        <p>Play together! Roll dice, answer maths questions and race to square 40</p>
+        <p style="font-size:.75rem;color:var(--fg3);margin-top:4px">Up to 4 players · All ages</p>
+      </div>
+    </div>
     ${CHASE_GAMES.map(g=>`
     <div class="chase-card" onclick="go('chase_game',{gameId:'${g.id}'})" style="border-color:${g.color}33">
       <div class="chase-icon">${g.icon}</div>
@@ -3731,6 +4240,7 @@ Object.assign(window,{
   toggleTTSteps,toggleHubSteps,
   runSearch,closeSearch,
   numpadTap,numpadDel,
+  boardStartGame,boardRollDice,boardAnswer,boardNext,
 });
 </script>
 </body>
