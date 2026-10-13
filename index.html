@@ -156,16 +156,16 @@ img{max-width:100%}
 .login-page{
   min-height:100dvh;display:flex;flex-direction:column;align-items:center;
   justify-content:center;padding:20px;position:relative;overflow:hidden;
-  background:radial-gradient(ellipse at 50% 0%,#0d1a35 0%,#060b18 60%,#020408 100%);
+  background:radial-gradient(ellipse at 30% 20%,#0e1e42 0%,#060b18 55%,#010306 100%);
 }
 /* animated grid floor */
 .login-page::before{
   content:'';position:absolute;inset:0;
   background-image:
-    linear-gradient(rgba(212,175,55,.07) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(212,175,55,.07) 1px,transparent 1px);
-  background-size:40px 40px;
-  mask-image:radial-gradient(ellipse at 50% 60%,black 30%,transparent 75%);
+    linear-gradient(rgba(212,175,55,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(212,175,55,.06) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse at 50% 70%,black 20%,transparent 70%);
   pointer-events:none;
 }
 /* scan line sweep */
@@ -173,6 +173,28 @@ img{max-width:100%}
   content:'';position:absolute;left:0;right:0;height:2px;
   background:linear-gradient(90deg,transparent,rgba(212,175,55,.4),transparent);
   animation:scanline 5s linear infinite;pointer-events:none;
+}
+/* floating formula elements */
+.math-float{
+  position:absolute;font-family:'Caveat',cursive;pointer-events:none;
+  color:rgba(212,175,55,.18);font-weight:700;user-select:none;
+  animation:math-drift linear infinite;
+}
+@keyframes math-drift{
+  0%  {transform:translateY(0) rotate(var(--r0)) scale(1);opacity:0}
+  8%  {opacity:1}
+  92% {opacity:.8}
+  100%{transform:translateY(-110vh) rotate(var(--r1)) scale(1.06);opacity:0}
+}
+@keyframes orbit-slow{
+  from{transform:rotate(0deg) translateX(var(--orb-r)) rotate(0deg)}
+  to  {transform:rotate(360deg) translateX(var(--orb-r)) rotate(-360deg)}
+}
+/* glow ring behind logo */
+.login-glow{
+  position:absolute;width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,55,.07) 0%,transparent 70%);
+  pointer-events:none;
 }
 
 /* ── logo block ── */
@@ -1444,6 +1466,44 @@ const WORKED_STEPS={
   },
 };
 
+// ── VIDEO SUPPORT LINKS (curated YouTube, safe external links) ──────
+// Keys match lesson IDs or topic keywords; values are {label, url}
+const VIDEO_LINKS={
+  // Year 6
+  'y6-m1':{label:'Long Multiplication explained',url:'https://www.youtube.com/watch?v=GsNnKwJiCxQ'},
+  'y6-m2':{label:'Bus Stop Division (short division)',url:'https://www.youtube.com/watch?v=jBRpf5oiMRs'},
+  'y6-f1':{label:'Adding fractions with unlike denominators',url:'https://www.youtube.com/watch?v=52ZlXsFJULI'},
+  'y6-f2':{label:'Percentages of amounts',url:'https://www.youtube.com/watch?v=dHx9YgzPFiU'},
+  'y6-a1':{label:'Solving simple equations (algebra)',url:'https://www.youtube.com/watch?v=l3XzepN03KQ'},
+  'y6-g1':{label:'Area and Perimeter',url:'https://www.youtube.com/watch?v=AAY1bsazcgM'},
+  // Year 5
+  'y5-d1':{label:'Decimal place value explained',url:'https://www.youtube.com/watch?v=MlRCCCPbmao'},
+  'y5-a1':{label:'Types of angles — full tutorial',url:'https://www.youtube.com/watch?v=d6vC-AvGFqA'},
+  // Year 4
+  'y4-m1':{label:'Grid method multiplication',url:'https://www.youtube.com/watch?v=jPKVu6xGDSQ'},
+  'y4-f1':{label:'Equivalent fractions with diagrams',url:'https://www.youtube.com/watch?v=leCOGKxAaGE'},
+  // Year 3
+  'y3-a1':{label:'Column addition step by step',url:'https://www.youtube.com/watch?v=ZXsQAXx_ao0'},
+  // Year 2
+  'y2-f1':{label:'Halves and quarters for kids',url:'https://www.youtube.com/watch?v=VvCeEF4qdH0'},
+  // Year 1
+  'y1-p1':{label:'Place value — tens and ones',url:'https://www.youtube.com/watch?v=pQ_BI9Bj7CY'},
+  // Year 0
+  'y0-c1':{label:'Counting to 10 — sing along',url:'https://www.youtube.com/watch?v=0TgLtF3PMOc'},
+  // Times tables
+  'tt':{label:'Times tables tricks and tips',url:'https://www.youtube.com/watch?v=kxoVPITCRow'},
+};
+function getLessonVideo(lid){
+  if(!lid)return null;
+  if(VIDEO_LINKS[lid])return VIDEO_LINKS[lid];
+  // fallback partial match
+  const s=String(lid).toLowerCase();
+  for(const [k,v] of Object.entries(VIDEO_LINKS)){
+    if(s.startsWith(k.slice(0,4)))return v;
+  }
+  return null;
+}
+
 // ── CLASSROOM BOARD SVG RENDERERS ────────────────────────────────
 // Each returns an SVG string for a given step index (0-based)
 const BOARD_RENDERERS={
@@ -1729,33 +1789,218 @@ const BOARD_RENDERERS={
     return svg;
   },
 
-  // Year 5 – Long division (bus stop)
+  // Year 5–6 – Bus Stop method (Short Division): 358 ÷ 6
   long_division:(step)=>{
-    const W=240,H=170;
+    const W=260,H=210;
     let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
-    svg+=`<text x="120" y="18" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" letter-spacing="2">BUS STOP ÷</text>`;
-    // 196 ÷ 4
+    const chalk=(t,x,y,opts={})=>{const{sz=22,fill='rgba(255,255,255,.88)',anchor='middle',cls='',w='900'}=opts;return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${sz}" font-weight="${w}">${t}</text>`};
+    // Title
+    svg+=chalk('Bus Stop Method: 358 ÷ 6',130,18,{sz:12,fill:'rgba(255,255,255,.35)',anchor:'middle',w:'700'});
+    // Step 0: draw the bus stop symbol and dividend
     if(step>=0){
-      svg+=`<text x="40" y="60" text-anchor="middle" fill="#60a5fa" font-size="28" font-weight="900">4</text>`;
-      svg+=`<line x1="55" y1="38" x2="55" y2="70" stroke="rgba(255,255,255,.6)" stroke-width="2"/>`;
-      svg+=`<line x1="55" y1="38" x2="200" y2="38" stroke="rgba(255,255,255,.6)" stroke-width="2"/>`;
-      svg+=`<text x="95" y="68" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="28" font-weight="900">1</text>`;
-      svg+=`<text x="135" y="68" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="28" font-weight="900">9</text>`;
-      svg+=`<text x="175" y="68" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="28" font-weight="900">6</text>`;
+      // divisor
+      svg+=chalk('6',36,80,{sz:34,fill:'#60a5fa'});
+      // bracket
+      svg+=`<line x1="52" y1="48" x2="52" y2="90" stroke="rgba(255,255,255,.7)" stroke-width="2.5"/>`;
+      svg+=`<line x1="52" y1="48" x2="220" y2="48" stroke="rgba(255,255,255,.7)" stroke-width="2.5"/>`;
+      // digits of 358
+      svg+=chalk('3',95,86,{sz:34,fill:'rgba(255,255,255,.88)'});
+      svg+=chalk('5',145,86,{sz:34,fill:'rgba(255,255,255,.88)'});
+      svg+=chalk('8',195,86,{sz:34,fill:'rgba(255,255,255,.88)'});
+      svg+=chalk('3÷6=0 carry 3',130,108,{sz:11,fill:'rgba(255,255,255,.3)',w:'400'});
+    }
+    // Step 1: first digit of answer — 0 (can't divide 3 by 6), carry 3
+    if(step>=1){
+      svg+=chalk('0',95,38,{sz:26,fill:'#ffd166',cls:'chalk-appear'});
+      // carry mark: small 3 before 5
+      svg+=chalk('³',122,68,{sz:14,fill:'#f87171',cls:'chalk-appear',w:'900'});
+      svg+=chalk('→ 0, carry 3',150,108,{sz:11,fill:'rgba(255,107,107,.6)',cls:'chalk-appear',w:'400'});
+    }
+    // Step 2: 35÷6=5 remainder 5
+    if(step>=2){
+      svg+=chalk('5',145,38,{sz:26,fill:'#ffd166',cls:'chalk-appear'});
+      svg+=chalk('⁵',172,68,{sz:14,fill:'#f87171',cls:'chalk-appear',w:'900'});
+      svg+=chalk('35÷6=5 r5',130,126,{sz:11,fill:'rgba(255,255,255,.35)',cls:'chalk-appear',w:'400'});
+    }
+    // Step 3: 58÷6=9 remainder 4
+    if(step>=3){
+      svg+=chalk('9',195,38,{sz:26,fill:'#ffd166',cls:'chalk-appear'});
+      svg+=chalk('r4',218,38,{sz:14,fill:'#a78bfa',cls:'chalk-appear',w:'700'});
+      svg+=chalk('58÷6=9 r4',130,144,{sz:11,fill:'rgba(255,255,255,.35)',cls:'chalk-appear',w:'400'});
+    }
+    // Step 4: final answer
+    if(step>=4){
+      svg+=`<line x1="52" y1="155" x2="230" y2="155" stroke="rgba(255,255,255,.35)" stroke-width="1.5" class="chalk-appear"/>`;
+      svg+=chalk('Answer: 59 remainder 4',130,175,{sz:15,fill:'#4ade80',cls:'chalk-appear',w:'900'});
+      svg+=chalk('= 59⅔ as a mixed number',130,194,{sz:11,fill:'rgba(74,222,128,.6)',cls:'chalk-appear',w:'400'});
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // Year 6 – Long multiplication: 48 × 126
+  long_mult:(step)=>{
+    const W=240,H=210;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
+    const chalk=(t,x,y,opts={})=>{const{sz=24,fill='rgba(255,255,255,.88)',anchor='end',cls='',w='900'}=opts;return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${sz}" font-weight="${w}">${t}</text>`};
+    const cx=198; // right-align point
+    svg+=`<text x="120" y="16" text-anchor="middle" fill="rgba(255,255,255,.32)" font-size="11" letter-spacing="2" font-family="'Space Grotesk',sans-serif">LONG MULTIPLICATION</text>`;
+    // Step 0: write the numbers
+    if(step>=0){
+      svg+=chalk('1 2 6',cx,50,{fill:'rgba(255,255,255,.88)'});
+      svg+=chalk('× 4 8',cx,78,{fill:'rgba(255,255,255,.88)'});
+      svg+=`<line x1="30" y1="85" x2="${cx+4}" y2="85" stroke="rgba(255,255,255,.55)" stroke-width="2"/>`;
+    }
+    // Step 1: multiply by 8 (ones)
+    if(step>=1){
+      svg+=chalk('8 ×:',44,112,{sz:12,fill:'rgba(255,255,255,.35)',anchor:'start',w:'400'});
+      svg+=chalk('1 0 0 8',cx,112,{fill:'#4ade80',cls:'chalk-appear'});
+    }
+    // Step 2: multiply by 40 (tens) — add 0 placeholder
+    if(step>=2){
+      svg+=chalk('4×(+0):',44,140,{sz:12,fill:'rgba(255,255,255,.35)',anchor:'start',w:'400'});
+      svg+=chalk('5 0 4 0',cx,140,{fill:'#60a5fa',cls:'chalk-appear'});
+      // show the 0 placeholder hint
+      svg+=`<text x="${cx-2}" y="140" text-anchor="end" fill="rgba(96,165,250,.4)" font-size="13" font-weight="400" class="chalk-appear">  ←0</text>`;
+    }
+    // Step 3: draw addition line, sum
+    if(step>=3){
+      svg+=`<line x1="30" y1="148" x2="${cx+4}" y2="148" stroke="rgba(255,255,255,.4)" stroke-width="1.5" class="chalk-appear"/>`;
+      svg+=chalk('6 0 4 8',cx,172,{fill:'#ffd166',cls:'chalk-appear',sz:26});
+      svg+=`<line x1="30" y1="178" x2="${cx+4}" y2="178" stroke="rgba(255,255,255,.3)" stroke-width="1.5" class="chalk-appear"/>`;
+    }
+    // Step 4: final check
+    if(step>=4){
+      svg+=`<text x="30" y="200" fill="#4ade80" font-size="12" font-weight="700" class="chalk-appear">✓  48 × 126 = 6,048</text>`;
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // Year 6 – Adding fractions with unlike denominators: ⅓ + ¼
+  adding_fractions:(step)=>{
+    const W=260,H=210;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
+    const chalk=(t,x,y,opts={})=>{const{sz=18,fill='rgba(255,255,255,.88)',anchor='middle',cls='',w='700'}=opts;return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${sz}" font-weight="${w}">${t}</text>`};
+    svg+=chalk('Adding Unlike Fractions',130,16,{sz:11,fill:'rgba(255,255,255,.3)',anchor:'middle',w:'700'});
+    if(step>=0){
+      // show ⅓ + ¼ = ?
+      svg+=chalk('1',68,55,{sz:28,fill:'#60a5fa'});
+      svg+=`<line x1="46" y1="60" x2="92" y2="60" stroke="#60a5fa" stroke-width="2"/>`;
+      svg+=chalk('3',68,86,{sz:28,fill:'#60a5fa'});
+      svg+=chalk('+',105,72,{sz:22,fill:'rgba(255,255,255,.5)'});
+      svg+=chalk('1',143,55,{sz:28,fill:'#4ade80'});
+      svg+=`<line x1="121" y1="60" x2="167" y2="60" stroke="#4ade80" stroke-width="2"/>`;
+      svg+=chalk('4',143,86,{sz:28,fill:'#4ade80'});
+      svg+=chalk('= ?',205,72,{sz:22,fill:'rgba(255,255,255,.4)'});
     }
     if(step>=1){
-      // 1÷4 → 0 rem 1, bring down
-      svg+=`<text x="95" y="30" text-anchor="middle" fill="#ffd166" font-size="22" font-weight="900" class="chalk-appear">0</text>`;
-      svg+=`<text x="60" y="92" fill="rgba(255,255,255,.4)" font-size="12" class="chalk-appear">1 ÷ 4 = 0 r 1</text>`;
+      svg+=chalk('Find LCM of 3 and 4:',130,110,{sz:13,fill:'rgba(255,255,255,.5)',w:'400'});
+      svg+=chalk('LCM = 12',130,130,{sz:16,fill:'#ffd166',cls:'chalk-appear'});
     }
     if(step>=2){
-      svg+=`<text x="135" y="30" text-anchor="middle" fill="#ffd166" font-size="22" font-weight="900" class="chalk-appear">4</text>`;
-      svg+=`<text x="60" y="110" fill="rgba(255,255,255,.4)" font-size="12" class="chalk-appear">19 ÷ 4 = 4 r 3</text>`;
+      svg+=chalk('×4',62,155,{sz:13,fill:'rgba(96,165,250,.6)',cls:'chalk-appear'});
+      svg+=chalk('4',68,168,{sz:24,fill:'#60a5fa',cls:'chalk-appear'});
+      svg+=`<line x1="46" y1="173" x2="92" y2="173" stroke="#60a5fa" stroke-width="2" class="chalk-appear"/>`;
+      svg+=chalk('12',68,194,{sz:24,fill:'#60a5fa',cls:'chalk-appear'});
+      svg+=chalk('+',105,182,{sz:22,fill:'rgba(255,255,255,.4)',cls:'chalk-appear'});
+      svg+=chalk('×3',137,155,{sz:13,fill:'rgba(74,222,128,.6)',cls:'chalk-appear'});
+      svg+=chalk('3',143,168,{sz:24,fill:'#4ade80',cls:'chalk-appear'});
+      svg+=`<line x1="121" y1="173" x2="167" y2="173" stroke="#4ade80" stroke-width="2" class="chalk-appear"/>`;
+      svg+=chalk('12',143,194,{sz:24,fill:'#4ade80',cls:'chalk-appear'});
     }
     if(step>=3){
-      svg+=`<text x="175" y="30" text-anchor="middle" fill="#ffd166" font-size="22" font-weight="900" class="chalk-appear">9</text>`;
-      svg+=`<text x="60" y="128" fill="rgba(255,255,255,.4)" font-size="12" class="chalk-appear">36 ÷ 4 = 9 r 0</text>`;
-      svg+=`<text x="120" y="155" text-anchor="middle" fill="#4ade80" font-size="16" font-weight="900" class="chalk-appear">196 ÷ 4 = 49 ✓</text>`;
+      svg+=chalk('=',175,182,{sz:22,fill:'rgba(255,255,255,.4)',cls:'chalk-appear'});
+      svg+=chalk('7',210,168,{sz:28,fill:'#ffd166',cls:'chalk-appear',w:'900'});
+      svg+=`<line x1="192" y1="173" x2="228" y2="173" stroke="#ffd166" stroke-width="2.5" class="chalk-appear"/>`;
+      svg+=chalk('12',210,196,{sz:28,fill:'#ffd166',cls:'chalk-appear',w:'900'});
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // Year 6 – Percentages: 25% of £80
+  percentages:(step)=>{
+    const W=260,H=200;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
+    const chalk=(t,x,y,opts={})=>{const{sz=16,fill='rgba(255,255,255,.88)',anchor='start',cls='',w:'700'}=opts;return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${sz}" font-weight="${w}">${t}</text>`};
+    svg+=`<text x="130" y="16" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="11" letter-spacing="2" font-family="'Space Grotesk',sans-serif">PERCENTAGES</text>`;
+    if(step>=0){
+      svg+=`<text x="130" y="45" text-anchor="middle" fill="#ffd166" font-size="22" font-weight="900">25% of £80 = ?</text>`;
+      // bar representing £80
+      svg+=`<rect x="20" y="55" width="220" height="22" rx="5" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>`;
+      svg+=`<text x="130" y="70" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="12">£80 = 100%</text>`;
+    }
+    if(step>=1){
+      // Method 1: ÷100 × 25
+      svg+=`<text x="20" y="100" fill="#60a5fa" font-size="14" font-weight="700" class="chalk-appear">Method 1: ÷100 then ×25</text>`;
+      svg+=`<text x="20" y="120" fill="rgba(255,255,255,.6)" font-size="13" class="chalk-appear">80 ÷ 100 = 0.80</text>`;
+      svg+=`<text x="20" y="138" fill="rgba(255,255,255,.6)" font-size="13" class="chalk-appear">0.80 × 25 = £20</text>`;
+    }
+    if(step>=2){
+      svg+=`<text x="20" y="162" fill="#4ade80" font-size="14" font-weight="700" class="chalk-appear">Method 2: build from 10%</text>`;
+      svg+=`<text x="20" y="180" fill="rgba(255,255,255,.6)" font-size="13" class="chalk-appear">10% = £8 → 25% = 2×£8 + £4 = £20</text>`;
+    }
+    if(step>=3){
+      svg+=`<rect x="140" y="90" width="110" height="42" rx="8" fill="rgba(245,166,35,.12)" stroke="#ffd166" stroke-width="1.5" class="chalk-appear"/>`;
+      svg+=`<text x="195" y="108" text-anchor="middle" fill="#ffd166" font-size="13" font-weight="700" class="chalk-appear">Answer</text>`;
+      svg+=`<text x="195" y="126" text-anchor="middle" fill="#ffd166" font-size="22" font-weight="900" class="chalk-appear">£20</text>`;
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // Year 6 – Algebra: 5n = 150
+  algebra:(step)=>{
+    const W=240,H=200;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
+    const chalk=(t,x,y,opts={})=>{const{sz=18,fill='rgba(255,255,255,.88)',anchor='middle',cls='',w='700'}=opts;return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${sz}" font-weight="${w}">${t}</text>`};
+    svg+=chalk('Solving an Equation',120,16,{sz:11,fill:'rgba(255,255,255,.3)',w:'700'});
+    if(step>=0){
+      svg+=chalk('5n = 150',120,55,{sz:32,fill:'#ffd166',w:'900'});
+      svg+=chalk('Each apple costs n pence.',120,78,{sz:12,fill:'rgba(255,255,255,.4)',w:'400'});
+    }
+    if(step>=1){
+      svg+=`<rect x="30" y="88" width="180" height="38" rx="8" fill="rgba(96,165,250,.1)" stroke="#60a5fa" stroke-width="1.5" class="chalk-appear"/>`;
+      svg+=chalk('÷ both sides by 5',120,112,{sz:14,fill:'#60a5fa',cls:'chalk-appear',w:'700'});
+    }
+    if(step>=2){
+      svg+=chalk('5n ÷ 5 = 150 ÷ 5',120,148,{sz:18,fill:'rgba(255,255,255,.7)',cls:'chalk-appear',w:'700'});
+    }
+    if(step>=3){
+      svg+=`<rect x="60" y="157" width="120" height="36" rx="8" fill="rgba(74,222,128,.12)" stroke="#4ade80" stroke-width="2" class="chalk-appear"/>`;
+      svg+=chalk('n = 30',120,180,{sz:26,fill:'#4ade80',cls:'chalk-appear',w:'900'});
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // Year 6 – Area and Perimeter
+  area_perimeter:(step)=>{
+    const W=260,H=210;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="'Caveat',cursive">`;
+    const chalk=(t,x,y,opts={})=>{const{sz=14,fill='rgba(255,255,255,.88)',anchor='middle',cls='',w:'700'}=opts;return`<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${sz}" font-weight="${w}">${t}</text>`};
+    svg+=chalk('Area & Perimeter',130,16,{sz:11,fill:'rgba(255,255,255,.3)',w:'700'});
+    if(step>=0){
+      // rectangle: 8×5
+      svg+=`<rect x="50" y="30" width="160" height="90" rx="4" fill="rgba(96,165,250,.08)" stroke="#60a5fa" stroke-width="2"/>`;
+      svg+=chalk('8 m',130,26,{sz:14,fill:'#60a5fa'});
+      svg+=chalk('5 m',40,78,{sz:14,fill:'#60a5fa'});
+    }
+    if(step>=1){
+      // Perimeter
+      svg+=chalk('Perimeter = 2 × (l + w)',130,142,{sz:14,fill:'rgba(255,255,255,.6)',cls:'chalk-appear'});
+      svg+=chalk('= 2 × (8 + 5) = 2 × 13',130,160,{sz:14,fill:'rgba(255,255,255,.6)',cls:'chalk-appear'});
+      svg+=chalk('= 26 m',130,178,{sz:18,fill:'#4ade80',cls:'chalk-appear',w:'900'});
+    }
+    if(step>=2){
+      // Area inside the rect
+      svg+=chalk('Area = l × w',130,60,{sz:14,fill:'rgba(255,209,102,.7)',cls:'chalk-appear'});
+      svg+=chalk('= 8 × 5',130,80,{sz:14,fill:'rgba(255,209,102,.7)',cls:'chalk-appear'});
+      svg+=chalk('= 40 m²',130,100,{sz:20,fill:'#ffd166',cls:'chalk-appear',w:'900'});
+    }
+    if(step>=3){
+      svg+=chalk('Area = length × width',130,196,{sz:11,fill:'rgba(255,255,255,.28)',cls:'chalk-appear',w:'400'});
     }
     svg+=`</svg>`;
     return svg;
@@ -2077,10 +2322,36 @@ function logout(){S.user=null;S.view='login';render()}
 let loginSelected=null;
 function renderLogin(){
   loginSelected=null;
+  // floating maths formulas: [formula text, size, left%, delay(s), duration(s), rotate-start, rotate-end]
+  const floats=[
+    ['π = 3.14159…','1.4rem','5%',0,14,'−8deg','6deg'],
+    ['E = mc²','1.6rem','18%',2,11,'4deg','−5deg'],
+    ['a² + b² = c²','1.3rem','72%',0.5,13,'−6deg','4deg'],
+    ['∑(n) = n(n+1)/2','1.1rem','85%',3,16,'3deg','−7deg'],
+    ['x = (−b ± √Δ) / 2a','1rem','60%',1,15,'−4deg','8deg'],
+    ['∞','2.8rem','42%',4,9,'0deg','10deg'],
+    ['∫₀¹ x dx = ½','1.1rem','28%',2.5,17,'5deg','−4deg'],
+    ['3 × 7 = 21','1.5rem','92%',1.5,12,'−5deg','5deg'],
+    ['V = πr²h','1.3rem','8%',5,18,'6deg','−6deg'],
+    ['cos²θ + sin²θ = 1','1rem','50%',3.5,14,'−3deg','5deg'],
+    ['½ + ¼ = ¾','1.4rem','78%',0,16,'4deg','−8deg'],
+    ['d = √((x₂−x₁)² + (y₂−y₁)²)','0.85rem','33%',4.5,20,'−6deg','4deg'],
+  ];
+  const floatEls=floats.map(([txt,sz,left,delay,dur,r0,r1])=>`
+    <div class="math-float" style="font-size:${sz};left:${left};bottom:-5%;
+      --r0:${r0};--r1:${r1};
+      animation-delay:${delay}s;animation-duration:${dur}s;">${txt}</div>`).join('');
+
   return `
   <div class="login-page">
+    <!-- Ambient glow -->
+    <div class="login-glow" style="top:-60px;left:50%;transform:translateX(-50%)"></div>
+
+    <!-- Floating mathematical formulas -->
+    ${floatEls}
+
     <!-- FONA logo -->
-    <div class="login-logo">
+    <div class="login-logo" style="z-index:1;position:relative">
       <div class="login-logo-emblem">F</div>
       <div class="login-logo-text">
         <div class="brand">FONA</div>
@@ -2088,15 +2359,18 @@ function renderLogin(){
       </div>
     </div>
 
-    <div class="login-hero">
+    <div class="login-hero" style="z-index:1;position:relative">
       <h1>Mathematics<br><em>Intelligence</em></h1>
+      <p style="color:rgba(212,175,55,.55);font-size:.82rem;margin-bottom:10px;font-family:var(--fb);letter-spacing:.04em">
+        Where numbers come alive ✦ Every child can love maths
+      </p>
       <div class="hud-status">
         <span class="hud-dot"></span>
         System Online · Select your profile
       </div>
     </div>
 
-    <div class="profile-grid" id="profile-grid">
+    <div class="profile-grid" id="profile-grid" style="z-index:1;position:relative">
       ${DATA.users.map(u=>{
         const isPhoto=u.avatar&&u.avatar.startsWith('data:');
         const avatarHtml=isPhoto
@@ -2119,6 +2393,12 @@ function renderLogin(){
         </div>`;
       }).join('')}
     </div>
+
+    <!-- motivational footer -->
+    <p style="position:relative;z-index:1;margin-top:28px;font-size:.72rem;color:rgba(212,175,55,.3);
+      letter-spacing:.1em;text-transform:uppercase;text-align:center">
+      FONA Mathematics Intelligence · Powered by FONA Technologies Ltd
+    </p>
   </div>`;
 }
 
@@ -2748,19 +3028,33 @@ function findLesson(lid){
 // Map lesson IDs to board renderer keys
 function getLessonBoardKey(lid){
   if(!lid)return null;
+  // Direct lesson-id overrides first (most specific)
+  const exact={
+    'y6-m1':'long_mult',
+    'y6-m2':'long_division',
+    'y6-f1':'adding_fractions',
+    'y6-f2':'percentages',
+    'y6-a1':'algebra',
+    'y6-g1':'area_perimeter',
+  };
+  if(exact[lid])return exact[lid];
   const s=String(lid).toLowerCase();
   if(s.includes('count'))return'counting';
-  if(s.includes('place')&&s.includes('1'))return'place_value_1';
   if(s.includes('place'))return'place_value_1';
   if(s.includes('half')||s.includes('quarter'))return'fractions_2';
   if(s.includes('equiv'))return'equiv_fractions';
   if(s.includes('grid'))return'grid_method';
   if(s.includes('column_add')||s.includes('col_add'))return'column_addition';
   if(s.includes('column')||s.includes('long_mult'))return'column_method';
-  if(s.includes('divis')||s.includes('dmsb'))return'long_division';
+  if(s.includes('bus')||s.includes('short_div')||s.includes('y6-m2'))return'long_division';
+  if(s.includes('divis'))return'long_division';
   if(s.includes('decimal'))return'decimals';
   if(s.includes('angle'))return'angles';
   if(s.includes('mental'))return'mental_strategies';
+  if(s.includes('pct')||s.includes('percent'))return'percentages';
+  if(s.includes('alg')||s.includes('expr'))return'algebra';
+  if(s.includes('area')||s.includes('perim'))return'area_perimeter';
+  if(s.includes('frac')&&!s.includes('equiv'))return'adding_fractions';
   if(s.includes('times')||s.includes('table')||s.includes('mult'))return'times_table';
   return null;
 }
@@ -2799,13 +3093,26 @@ function renderLesson(){
       <div style="text-align:center;color:rgba(255,255,255,.3);font-size:.85rem;padding:24px">📐<br>Select a step<br>to see it on the board</div>
     </div>`;
 
+  const vid=getLessonVideo(lid);
+  const vidChip=vid?`<a href="${vid.url}" target="_blank" rel="noopener noreferrer"
+    style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;
+      background:rgba(255,59,48,.12);border:1.5px solid rgba(255,59,48,.35);
+      border-radius:100px;color:#ff6b6b;font-size:.8rem;font-weight:700;
+      text-decoration:none;margin-top:10px;transition:background .2s"
+    onmouseover="this.style.background='rgba(255,59,48,.22)'"
+    onmouseout="this.style.background='rgba(255,59,48,.12)'">
+    <span style="font-size:1.1rem">▶</span> Watch: ${vid.label}
+  </a>`:'';
   return `
   <div style="margin-bottom:16px">
     <h2 style="font-family:var(--fh)">${l.title}</h2>
-    ${prog?`<span class="badge badge-green mt8">Completed: ${prog.pct}%</span>`:''}
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:6px">
+      ${prog?`<span class="badge badge-green">Completed: ${prog.pct}%</span>`:''}
+      ${vidChip}
+    </div>
   </div>
   <div class="lesson-hook"><strong>Real World:</strong> ${l.hook}</div>
-  <div class="section-title mt16 mb10">📋 Step by Step</div>
+  <div class="section-title mt16 mb10">📋 Step by Step — click each step to see it on the board</div>
   <div class="we-body">
     <ol class="we-steps" style="padding:0">${stepsHtml}</ol>
     ${boardHtml}
