@@ -209,7 +209,7 @@ img{max-width:100%}
 }
 .login-logo-emblem{
   width:56px;height:56px;border-radius:14px;
-  background:linear-gradient(135deg,#d4af37 0%,#f5c842 50%,#b8860b 100%);
+  background:linear-gradient(135deg,#00C9A7 0%,#00F5CC 50%,#009e85 100%);
   display:flex;align-items:center;justify-content:center;
   font-size:1.7rem;font-weight:900;color:#060b18;
   box-shadow:0 0 32px rgba(0,201,167,.5),0 4px 16px rgba(0,0,0,.6);
@@ -218,7 +218,7 @@ img{max-width:100%}
 .login-logo-text{text-align:left}
 .login-logo-text .brand{
   font-family:var(--fh);font-size:1.55rem;font-weight:900;letter-spacing:.06em;
-  background:linear-gradient(90deg,#f5c842,#d4af37,#ffe680);
+  background:linear-gradient(90deg,#00F5CC,#00C9A7,#00e0b8);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   line-height:1;
 }
@@ -238,7 +238,7 @@ img{max-width:100%}
 }
 .login-hero h1 em{
   font-style:normal;
-  background:linear-gradient(90deg,#f5c842,#d4af37);
+  background:linear-gradient(90deg,#00F5CC,#00C9A7);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
 .login-hero .hud-status{
@@ -317,7 +317,7 @@ img{max-width:100%}
 .card-code-box input{
   width:100%;padding:11px 8px;box-sizing:border-box;
   border:1px solid rgba(0,201,167,.3);border-radius:10px;
-  background:rgba(0,0,0,.5);color:#f5c842;
+  background:rgba(0,0,0,.5);color:#00F5CC;
   text-align:center;font-size:1.05rem;letter-spacing:.35em;
   text-transform:uppercase;font-family:var(--fh);font-weight:700;
 }
@@ -326,7 +326,7 @@ img{max-width:100%}
   box-shadow:0 0 0 3px rgba(0,201,167,.12);background:rgba(0,0,0,.6)}
 .btn-signin{
   margin-top:9px;width:100%;padding:11px;
-  background:linear-gradient(135deg,#d4af37,#f5c842);
+  background:linear-gradient(135deg,#00C9A7,#00F5CC);
   color:#060b18;font-weight:900;border:none;border-radius:10px;
   cursor:pointer;font-size:.88rem;font-family:var(--fh);letter-spacing:.05em;
   transition:opacity .15s,box-shadow .15s;
@@ -335,6 +335,32 @@ img{max-width:100%}
 .btn-signin:active{opacity:.85}
 .pin-error{color:#ff6b6b;font-size:.8rem;margin-top:7px;min-height:18px;text-align:center;font-weight:600}
 .pin-box{display:none}
+
+/* ─── MOBILE RESPONSIVENESS (small phones ≤ 400px) ─── */
+@media(max-width:400px){
+  .login-page{padding:12px 12px 24px}
+  .login-logo{gap:10px;margin-bottom:4px}
+  .login-logo-emblem{width:46px;height:46px;border-radius:11px;font-size:1.4rem}
+  .login-logo-text .brand{font-size:1.25rem}
+  .login-logo-text .product{font-size:.65rem}
+  .login-hero{margin-bottom:20px}
+  .login-hero h1{font-size:clamp(1.25rem,5vw,1.6rem);line-height:1.2}
+  .profile-grid{gap:10px}
+  .profile-card{padding:14px 10px 12px;border-radius:14px}
+  .profile-card .avatar,
+  .profile-card .avatar-emoji{width:58px;height:58px;font-size:2rem}
+  .profile-card .pname{font-size:.82rem}
+  .profile-card .pyear{font-size:.65rem}
+  .profile-card .access-badge{font-size:.6rem;padding:2px 8px}
+  .card-code-box input{font-size:.95rem;padding:9px 6px}
+  .btn-signin{padding:10px;font-size:.82rem}
+}
+@media(max-width:340px){
+  .profile-grid{grid-template-columns:1fr}
+  .profile-card .avatar,
+  .profile-card .avatar-emoji{width:52px;height:52px}
+  .login-hero h1{font-size:1.2rem}
+}
 
 /* ─── DASHBOARD ─── */
 .dash-greeting{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)}
