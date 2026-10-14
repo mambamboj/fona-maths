@@ -699,6 +699,8 @@ img{max-width:100%}
 .correct-flash{animation:correctFlash .5s}
 @keyframes correctFlash{0%{background:rgba(46,204,138,.3)}100%{background:transparent}}
 .no-results{text-align:center;color:var(--fg2);padding:40px 20px}
+.vid-mgr-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.vid-mgr-row:last-child{border-bottom:none}
 </style>
 </head>
 <body>
@@ -2552,8 +2554,18 @@ const VIDEO_LINKS={
   // Times tables
   'tt':{label:'Times Tables 1–12 (all tables song)',url:'https://www.youtube.com/watch?v=SxBxGiJLz2U'},
 };
+function getVideoOverride(lid){
+  try{const v=localStorage.getItem('fona_vid_'+lid);if(v){const p=JSON.parse(v);return p;}return null;}catch(e){return null;}
+}
+function setVideoOverride(lid,label,url){
+  try{localStorage.setItem('fona_vid_'+lid,JSON.stringify({label,url}));}catch(e){}
+}
+function clearVideoOverride(lid){
+  try{localStorage.removeItem('fona_vid_'+lid);}catch(e){}
+}
 function getLessonVideo(lid){
   if(!lid)return null;
+  const ov=getVideoOverride(lid);if(ov)return ov;
   if(VIDEO_LINKS[lid])return VIDEO_LINKS[lid];
   // fallback partial match
   const s=String(lid).toLowerCase();
@@ -4947,6 +4959,41 @@ function renderSettings(){
     <div id="set_saved_${u.id}" class="save-indicator"></div>
   </div>`).join('')}
   <div class="settings-group">
+    <h3>🎬 Video Manager</h3>
+    <p style="font-size:.85rem;color:var(--fg2);margin-bottom:12px">Replace any broken video link. Paste a new YouTube URL and save — changes apply instantly without touching the code.</p>
+    <div id="vid-mgr-list">
+      ${(()=>{
+        const rows=Object.entries(VIDEO_LINKS).map(([lid,def])=>{
+          const ov=getVideoOverride(lid);
+          const current=ov||def;
+          const isOverridden=!!ov;
+          return `<div class="vid-mgr-row" id="vmr_${lid}">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:.8rem;font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${current.label}</div>
+              <div style="font-size:.7rem;color:var(--fg2);margin-top:2px;word-break:break-all">${isOverridden?'<span style="color:var(--teal);font-weight:600">Custom</span> — ':'Default — '}${current.url.replace('https://www.youtube.com/watch?v=','youtu.be/')}</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+              <a href="${current.url}" target="_blank" rel="noopener" style="font-size:.75rem;color:var(--teal);text-decoration:none" title="Test video">▶ Test</a>
+              <button class="btn btn-outline btn-sm" onclick="openVidEdit('${lid}')" style="font-size:.7rem;padding:4px 8px">Edit</button>
+              ${isOverridden?`<button class="btn btn-sm" onclick="resetVid('${lid}')" style="font-size:.7rem;padding:4px 8px;background:var(--red);color:#fff" title="Restore default">↺</button>`:''}
+            </div>
+          </div>`;
+        }).join('');
+        return rows;
+      })()}
+    </div>
+    <!-- Inline edit form (hidden until Edit clicked) -->
+    <div id="vid-edit-form" hidden style="margin-top:14px;background:var(--card2,var(--card));border-radius:12px;padding:14px;border:1px solid var(--border)">
+      <div style="font-size:.8rem;font-weight:700;margin-bottom:8px" id="vid-edit-label"></div>
+      <input type="url" id="vid-edit-url" placeholder="https://www.youtube.com/watch?v=..." style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);color:var(--fg);font-size:.82rem;margin-bottom:8px">
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-gold btn-sm" onclick="saveVidEdit()" style="flex:1">Save</button>
+        <button class="btn btn-outline btn-sm" onclick="closeVidEdit()" style="flex:1">Cancel</button>
+      </div>
+      <div id="vid-edit-status" style="font-size:.75rem;margin-top:6px;min-height:16px"></div>
+    </div>
+  </div>
+  <div class="settings-group">
     <h3 style="color:var(--red)">⚠️ Data</h3>
     <p style="font-size:.85rem;color:var(--fg2);margin-bottom:12px">Reset a child's progress (cannot be undone)</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -4987,6 +5034,44 @@ function resetProgress(uid){
   render();
 }
 
+// ─── VIDEO MANAGER ───────────────────────────────────────────────
+let _vidEditId=null;
+function openVidEdit(lid){
+  _vidEditId=lid;
+  const def=VIDEO_LINKS[lid]||{};
+  const ov=getVideoOverride(lid);
+  const current=ov||def;
+  const lbl=el('vid-edit-label');
+  const inp=el('vid-edit-url');
+  const form=el('vid-edit-form');
+  const status=el('vid-edit-status');
+  if(lbl)lbl.textContent='Editing: '+current.label;
+  if(inp)inp.value=current.url||'';
+  if(status)status.textContent='';
+  if(form)form.hidden=false;
+  if(inp)setTimeout(()=>inp.focus(),50);
+}
+function closeVidEdit(){
+  _vidEditId=null;
+  const form=el('vid-edit-form');
+  if(form)form.hidden=true;
+}
+function saveVidEdit(){
+  if(!_vidEditId)return;
+  const inp=el('vid-edit-url');
+  const status=el('vid-edit-status');
+  const url=(inp?inp.value:'').trim();
+  if(!url){if(status)status.textContent='⚠ Please enter a URL.';return;}
+  if(!url.startsWith('http')){if(status)status.textContent='⚠ URL must start with https://';return;}
+  const def=VIDEO_LINKS[_vidEditId]||{label:_vidEditId};
+  setVideoOverride(_vidEditId,def.label,url);
+  if(status){status.textContent='✓ Saved!';status.style.color='var(--teal)';}
+  setTimeout(()=>{closeVidEdit();S.view='settings';render();},900);
+}
+function resetVid(lid){
+  clearVideoOverride(lid);
+  render();
+}
 // ─── BIND EVENTS ─────────────────────────────────────────────────
 function bindAll(){
   // pin-input no longer used (inline per-card inputs handle Enter in bindLogin)
