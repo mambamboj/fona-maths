@@ -4962,25 +4962,7 @@ function renderSettings(){
     <h3>🎬 Video Manager</h3>
     <p style="font-size:.85rem;color:var(--fg2);margin-bottom:12px">Replace any broken video link. Paste a new YouTube URL and save — changes apply instantly without touching the code.</p>
     <div id="vid-mgr-list">
-      ${(()=>{
-        const rows=Object.entries(VIDEO_LINKS).map(([lid,def])=>{
-          const ov=getVideoOverride(lid);
-          const current=ov||def;
-          const isOverridden=!!ov;
-          return `<div class="vid-mgr-row" id="vmr_${lid}">
-            <div style="flex:1;min-width:0">
-              <div style="font-size:.8rem;font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${current.label}</div>
-              <div style="font-size:.7rem;color:var(--fg2);margin-top:2px;word-break:break-all">${isOverridden?'<span style="color:var(--teal);font-weight:600">Custom</span> — ':'Default — '}${current.url.replace('https://www.youtube.com/watch?v=','youtu.be/')}</div>
-            </div>
-            <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
-              <a href="${current.url}" target="_blank" rel="noopener" style="font-size:.75rem;color:var(--teal);text-decoration:none" title="Test video">▶ Test</a>
-              <button class="btn btn-outline btn-sm" onclick="openVidEdit('${lid}')" style="font-size:.7rem;padding:4px 8px">Edit</button>
-              ${isOverridden?`<button class="btn btn-sm" onclick="resetVid('${lid}')" style="font-size:.7rem;padding:4px 8px;background:var(--red);color:#fff" title="Restore default">↺</button>`:''}
-            </div>
-          </div>`;
-        }).join('');
-        return rows;
-      })()}
+      ${buildVidMgrRows()}
     </div>
     <!-- Inline edit form (hidden until Edit clicked) -->
     <div id="vid-edit-form" hidden style="margin-top:14px;background:var(--card2,var(--card));border-radius:12px;padding:14px;border:1px solid var(--border)">
@@ -5035,6 +5017,30 @@ function resetProgress(uid){
 }
 
 // ─── VIDEO MANAGER ───────────────────────────────────────────────
+function buildVidMgrRows(){
+  let rows='';
+  Object.entries(VIDEO_LINKS).forEach(function(entry){
+    const lid=entry[0],def=entry[1];
+    const ov=getVideoOverride(lid);
+    const current=ov||def;
+    const isOverridden=!!ov;
+    const shortUrl=current.url.replace('https://www.youtube.com/watch?v=','youtu.be/');
+    const statusBadge=isOverridden?'<span style="color:var(--teal);font-weight:600">Custom</span> — ':'Default — ';
+    const resetBtn=isOverridden?('<button class="btn btn-sm" onclick="resetVid(\''+lid+'\')" style="font-size:.7rem;padding:4px 8px;background:var(--red);color:#fff" title="Restore default">↺</button>'):'';
+    rows+='<div class="vid-mgr-row" id="vmr_'+lid+'">'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:.8rem;font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+current.label+'</div>'
+      +'<div style="font-size:.7rem;color:var(--fg2);margin-top:2px;word-break:break-all">'+statusBadge+shortUrl+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;align-items:center;flex-shrink:0">'
+      +'<a href="'+current.url+'" target="_blank" rel="noopener" style="font-size:.75rem;color:var(--teal);text-decoration:none" title="Test video">▶ Test</a>'
+      +'<button class="btn btn-outline btn-sm" onclick="openVidEdit(\''+lid+'\')" style="font-size:.7rem;padding:4px 8px">Edit</button>'
+      +resetBtn
+      +'</div></div>';
+  });
+  return rows;
+}
+
 let _vidEditId=null;
 function openVidEdit(lid){
   _vidEditId=lid;
