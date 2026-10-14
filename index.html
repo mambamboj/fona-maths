@@ -780,6 +780,7 @@ const TT_HOOKS = {
 };
 
 // ─── CURRICULUM DATA ──────────────────────────────────────────────
+var sb=null; // Supabase client — null until configured
 const CURRICULUM = {
   0:{
     label:"Early Years",sub:"Counting & Numbers",color:"#FF8C42",icon:"🌟",
@@ -5008,7 +5009,7 @@ function resetProgress(uid){
   DATA.progress[uid]={};
   DATA.achievements[uid]=[];
   localSave();
-  if(sb){
+  if(typeof sb!=='undefined'&&sb){
     sb.from('fona_progress').delete().eq('profile_id',uid).then(({error})=>{if(error)console.warn('reset progress:',error);});
     sb.from('fona_achievements').delete().eq('profile_id',uid).then(({error})=>{if(error)console.warn('reset achievements:',error);});
   }
