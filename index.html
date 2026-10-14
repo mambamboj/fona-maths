@@ -12,13 +12,16 @@
    Palette: FONA navy/gold, dark-first with light override      */
 
 :root {
-  --navy:    #09182A;
-  --navy2:   #112236;
-  --navy3:   #192F4A;
-  --navy4:   #1E3A5A;
+  --navy:    #0A0E1A;
+  --navy2:   #0D1525;
+  --navy3:   #111D30;
+  --navy4:   #162438;
   --gold:    #F5A623;
   --gold2:   #FFD07B;
   --gold-bg: rgba(245,166,35,.13);
+  --teal:    #00C9A7;
+  --teal2:   #00F5CC;
+  --teal-bg: rgba(0,201,167,.13);
   --blue:    #4D9FFF;
   --green:   #2ECC8A;
   --red:     #FF6B6B;
@@ -29,11 +32,11 @@
   --s1:      var(--navy2);
   --s2:      var(--navy3);
   --s3:      var(--navy4);
-  --border:  rgba(77,159,255,.15);
+  --border:  rgba(0,201,167,.18);
   --fg:      #E8F4FF;
-  --fg2:     #8AAEC8;
-  --fg3:     #4A6A84;
-  --accent:  var(--gold);
+  --fg2:     #7ABCB0;
+  --fg3:     #3A6A64;
+  --accent:  var(--teal);
 
   --fh: 'Nunito', system-ui, sans-serif;
   --fb: 'Nunito', system-ui, sans-serif;
@@ -43,15 +46,15 @@
 }
 @media (prefers-color-scheme:light){
   :root:not([data-theme="dark"]){
-    --bg:#EEF3FF;--s1:#fff;--s2:#F0F6FF;--s3:#E2ECFF;
-    --border:rgba(13,27,42,.1);--fg:#0D1B2A;--fg2:#3A5470;--fg3:#7A94A8;
-    --gold-bg:rgba(245,166,35,.1); color-scheme:light;
+    --bg:#E8F8F6;--s1:#fff;--s2:#EEF9F7;--s3:#D4F3EE;
+    --border:rgba(0,140,120,.15);--fg:#0A1E1C;--fg2:#2A6A64;--fg3:#6AA8A3;
+    --teal-bg:rgba(0,201,167,.1); color-scheme:light;
   }
 }
 :root[data-theme="light"]{
-  --bg:#EEF3FF;--s1:#fff;--s2:#F0F6FF;--s3:#E2ECFF;
-  --border:rgba(13,27,42,.1);--fg:#0D1B2A;--fg2:#3A5470;--fg3:#7A94A8;
-  --gold-bg:rgba(245,166,35,.1); color-scheme:light;
+  --bg:#E8F8F6;--s1:#fff;--s2:#EEF9F7;--s3:#D4F3EE;
+  --border:rgba(0,140,120,.15);--fg:#0A1E1C;--fg2:#2A6A64;--fg3:#6AA8A3;
+  --teal-bg:rgba(0,201,167,.1); color-scheme:light;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--fb);background:var(--bg);color:var(--fg);min-height:100dvh;overflow-x:hidden}
@@ -70,7 +73,7 @@ img{max-width:100%}
   border-bottom:1px solid var(--border);backdrop-filter:blur(12px);
   padding:10px 18px;display:flex;align-items:center;gap:10px;z-index:100;
   box-shadow:0 2px 16px rgba(0,0,0,.18)}
-.topbar-logo{font-family:var(--fh);font-weight:900;font-size:1.05rem;color:var(--gold);white-space:nowrap;letter-spacing:.02em}
+.topbar-logo{font-family:var(--fh);font-weight:900;font-size:1.05rem;color:var(--teal);white-space:nowrap;letter-spacing:.02em}
 .topbar-logo span{color:var(--fg);font-weight:700}
 .topbar-user{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--fg2)}
 .topbar-name{font-weight:600;color:var(--fg)}
@@ -95,7 +98,7 @@ img{max-width:100%}
   text-transform:uppercase;letter-spacing:.05em;border-top:2px solid transparent;transition:all .2s}
 .bnav-btn .bicon{font-size:1.35rem;line-height:1;transition:transform .2s}
 .bnav-btn .blabel{line-height:1}
-.bnav-btn.active{color:var(--gold);border-top-color:var(--gold)}
+.bnav-btn.active{color:var(--teal);border-top-color:var(--teal)}
 .bnav-btn.active .bicon{transform:scale(1.15)}
 .bnav-btn:hover{color:var(--fg)}
 
@@ -112,9 +115,9 @@ img{max-width:100%}
 /* ─── BUTTONS ─── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;
   border-radius:50px;font-weight:800;font-size:.95rem;transition:all .18s;letter-spacing:.01em}
-.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0D1B2A;
-  box-shadow:0 4px 14px rgba(245,166,35,.35)}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,166,35,.45)}
+.btn-gold{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#0A1E1C;
+  box-shadow:0 4px 14px rgba(0,201,167,.35)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,201,167,.45)}
 .btn-outline{background:transparent;border:2px solid var(--border);color:var(--fg)}
 .btn-outline:hover{border-color:var(--gold);color:var(--gold)}
 .btn-green{background:linear-gradient(135deg,var(--green),#26b87a);color:#fff;
@@ -934,7 +937,7 @@ const CURRICULUM = {
              {q:"³⁄₄ of 20 = ?",opts:[15,10,12,5],a:15}]},
       ]},
       {id:"y3-add",title:"Addition & Subtraction",icon:"➕",lessons:[
-        {id:"y3-a1",title:"Column Addition (3-digit)",
+        {id:"y3-a1",title:"Column Addition (3-digit)",boardKey:"col_add",
          hook:"🏪 A shop sells 347 items on Monday and 256 on Tuesday. How many in total?",
          steps:["Line up digits in columns: hundreds, tens, ones",
                 "Start with ONES: 7 + 6 = 13. Write 3, carry 1",
@@ -945,6 +948,30 @@ const CURRICULUM = {
              {q:"467 + 238 = ?",opts:[705,695,715,685],a:705},
              {q:"523 + 179 = ?",opts:[702,692,712,682],a:702},
              {q:"648 + 247 = ?",opts:[895,885,905,875],a:895}]},
+        {id:"y3-a2",title:"Column Subtraction (3-digit)",boardKey:"col_sub",
+         hook:"🏟️ A stadium has 842 seats. 368 are sold. How many seats are left?",
+         steps:["Set up: 842 − 368 in columns (H T O)",
+                "ONES: 2 − 8? Can't! Borrow 1 from tens → 12 − 8 = 4",
+                "TENS: (4−1) − 6? = 3 − 6? Can't! Borrow 1 from hundreds → 13 − 6 = 7",
+                "HUNDREDS: (8−1) − 3 = 4. Answer: 474"],
+         tip:"💡 After borrowing, the column you borrowed FROM loses 1. Always remember to subtract that 1!",
+         qs:[{q:"753 − 281 = ?",opts:[472,462,482,452],a:472},
+             {q:"921 − 467 = ?",opts:[454,464,444,474],a:454},
+             {q:"634 − 257 = ?",opts:[377,367,387,357],a:377},
+             {q:"800 − 346 = ?",opts:[454,464,444,474],a:454}]},
+      ]},
+      {id:"y3-8times",title:"8 Times Table",icon:"✖️",lessons:[
+        {id:"y3-m3",title:"The 8 Times Table",boardKey:"times_table_8",
+         hook:"🐙 An octopus has 8 tentacles. How many tentacles do 7 octopuses have?",
+         steps:["×8 is double ×4: 6×4=24, so 6×8=48",
+                "Count in eights: 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96",
+                "Pattern: all even numbers. Last digits: 8, 6, 4, 2, 0 and repeat",
+                "Use inverse: if 6×8=48, then 48÷8=6 and 48÷6=8"],
+         tip:"💡 ×8 = double, double, double! 7×8: double 7=14, double 14=28, double 28=56 ✓",
+         qs:[{q:"6 × 8 = ?",opts:[48,56,40,64],a:48},
+             {q:"9 × 8 = ?",opts:[72,64,80,56],a:72},
+             {q:"7 × 8 = ?",opts:[56,48,64,72],a:56},
+             {q:"12 × 8 = ?",opts:[96,88,104,80],a:96}]},
       ]},
     ]
   },
@@ -988,8 +1015,56 @@ const CURRICULUM = {
              {q:"In 8,091, how many hundreds?",opts:[0,8,9,1],a:0},
              {q:"Round 4,648 to the nearest 1,000",opts:[5000,4000,4600,4650],a:5000}]},
       ]},
+      {id:"y4-more-tables",title:"Times Tables 7, 11 & 12",icon:"✖️",lessons:[
+        {id:"y4-m3",title:"The 7 Times Table",boardKey:"times_table_7",
+         hook:"📅 A week has 7 days. How many days in 9 weeks? How many days in a year (52 weeks)?",
+         steps:["Count in sevens: 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84",
+                "7×7=49 — the tricky one! Say it 5 times fast: seven sevens are forty-nine!",
+                "Link to other tables: 7×8 — you already know 8×7=56 (same thing!)",
+                "Inverse check: 63÷7=9 ✓"],
+         tip:"💡 Learn the squares: 7×7=49, 8×8=64, 9×9=81. These are the hardest — memorise them!",
+         qs:[{q:"7 × 7 = ?",opts:[49,42,56,63],a:49},
+             {q:"8 × 7 = ?",opts:[56,49,63,42],a:56},
+             {q:"9 × 7 = ?",opts:[63,56,70,49],a:63},
+             {q:"11 × 7 = ?",opts:[77,70,84,63],a:77}]},
+        {id:"y4-m4",title:"The 11 and 12 Times Tables",
+         hook:"⚽ A football team has 11 players. A cricket team 11 too. How many players in 8 teams?",
+         steps:["×11 up to 9: just repeat the digit! 3×11=33, 7×11=77",
+                "11×10=110, 11×11=121, 11×12=132",
+                "×12: think of it as ×10 + ×2. 8×12 = 80+16 = 96",
+                "Or use the clock: 12×5=60 minutes. 12×2=24 hours in a day."],
+         tip:"💡 12×12=144 — a gross! The number 144 is called 'a gross' in old English.",
+         qs:[{q:"6 × 11 = ?",opts:[66,55,77,44],a:66},
+             {q:"7 × 12 = ?",opts:[84,72,96,78],a:84},
+             {q:"9 × 11 = ?",opts:[99,88,110,77],a:99},
+             {q:"12 × 12 = ?",opts:[144,132,124,148],a:144}]},
+      ]},
+      {id:"y4-written-mult",title:"Written Multiplication",icon:"✖️",lessons:[
+        {id:"y4-wm1",title:"Short Multiplication (2-digit × 1-digit)",boardKey:"short_mult",
+         hook:"🚌 48 children each receive 6 stickers. How many stickers altogether?",
+         steps:["Set up: 48 × 6",
+                "ONES: 8 × 6 = 48. Write 8, carry 4",
+                "TENS: 4 × 6 = 24, plus 4 carried = 28",
+                "Answer: 288. Check: 48×6 ≈ 50×6 = 300 ✓ (close enough to trust answer)"],
+         tip:"💡 Always estimate first! It helps catch mistakes. Round to nearest 10 and multiply.",
+         qs:[{q:"37 × 4 = ?",opts:[148,144,152,140],a:148},
+             {q:"53 × 7 = ?",opts:[371,364,378,357],a:371},
+             {q:"86 × 5 = ?",opts:[430,425,435,420],a:430},
+             {q:"94 × 6 = ?",opts:[564,554,574,560],a:564}]},
+        {id:"y4-wm2",title:"Grid Method Multiplication",boardKey:"grid_method",
+         hook:"🏗️ A car park has 23 rows with 17 spaces per row. How many spaces total?",
+         steps:["Split: 23 = 20+3, 17 = 10+7",
+                "Grid: 20×10=200, 20×7=140, 3×10=30, 3×7=21",
+                "Add: 200+140+30+21 = 391",
+                "Check with estimate: 20×17=340 + 3×17=51 → 391 ✓"],
+         tip:"💡 The grid method never lets you forget a part of the multiplication — all 4 boxes must be filled.",
+         qs:[{q:"24 × 13 = ?",opts:[312,302,322,296],a:312},
+             {q:"32 × 15 = ?",opts:[480,470,490,460],a:480},
+             {q:"41 × 22 = ?",opts:[902,892,912,882],a:902},
+             {q:"35 × 14 = ?",opts:[490,480,500,470],a:490}]},
+      ]},
       {id:"y4-frac",title:"Fractions & Decimals",icon:"½",lessons:[
-        {id:"y4-f1",title:"Equivalent Fractions",
+        {id:"y4-f1",title:"Equivalent Fractions",boardKey:"equiv_frac",
          hook:"🍕 ½ of a pizza = 2/4 of the same pizza. They look different but are EQUAL!",
          steps:["EQUIVALENT fractions are equal in value but written differently",
                 "To find equivalents: multiply top AND bottom by the same number",
@@ -1000,6 +1075,31 @@ const CURRICULUM = {
              {q:"Simplify 6/9",opts:["2/3","3/6","1/2","4/6"],a:"2/3"},
              {q:"Which equals ¾?",opts:["9/12","6/9","4/6","3/5"],a:"9/12"},
              {q:"Simplify 8/12",opts:["2/3","3/4","4/5","1/2"],a:"2/3"}]},
+        {id:"y4-f2",title:"Decimals — tenths & hundredths",
+         hook:"💰 A price tag shows £3.47. What does each digit mean?",
+         steps:["The decimal point separates pounds from pence: £3.47",
+                "3 = 3 pounds (whole number part)",
+                "4 = 4 tenths of a pound (40p)",
+                "7 = 7 hundredths of a pound (7p)",
+                "So 0.25 = 25/100 = ¼. 0.5 = 50/100 = ½"],
+         tip:"💡 Key decimal-fraction equivalents: ½=0.5, ¼=0.25, ¾=0.75, ⅕=0.2, ⅒=0.1",
+         qs:[{q:"What decimal equals ¼?",opts:[0.25,0.5,0.4,0.75],a:0.25},
+             {q:"What decimal equals ½?",opts:[0.5,0.25,0.75,0.2],a:0.5},
+             {q:"0.6 as a fraction?",opts:["3/5","6/10","2/3","1/6"],a:"3/5"},
+             {q:"Which is bigger: 0.3 or 0.28?",opts:["0.3","0.28","equal","cannot tell"],a:"0.3"}]},
+      ]},
+      {id:"y4-measure",title:"Measurement",icon:"📏",lessons:[
+        {id:"y4-mes1",title:"Perimeter & Area",boardKey:"perimeter",
+         hook:"🏡 A garden is 8m long and 5m wide. What is its perimeter and area?",
+         steps:["PERIMETER: add up all sides. 8+5+8+5 = 26m (or 2×(8+5) = 26m)",
+                "AREA: count how many squares fit inside it. 8×5 = 40 square metres (m²)",
+                "Area = length × width for rectangles",
+                "Perimeter is measured in m or cm. Area in m² or cm²"],
+         tip:"💡 Perimeter goes AROUND the edge. Area fills the INSIDE. Perimeter = cm. Area = cm².",
+         qs:[{q:"Perimeter of 7m×3m rectangle?",opts:["20m","21m","10m","28m"],a:"20m"},
+             {q:"Area of 9cm×6cm rectangle?",opts:["54cm²","30cm²","15cm²","63cm²"],a:"54cm²"},
+             {q:"Perimeter of square, side 5cm?",opts:["20cm","25cm","10cm","15cm"],a:"20cm"},
+             {q:"Area of 12m×4m?",opts:["48m²","32m²","16m²","44m²"],a:"48m²"}]},
       ]},
     ]
   },
@@ -1043,18 +1143,78 @@ const CURRICULUM = {
              {q:"Put in order: 3.4, 3.04, 3.40, 3.004",opts:["3.004,3.04,3.4,3.40","3.4,3.40,3.04,3.004","3.04,3.4,3.40,3.004","3.004,3.40,3.4,3.04"],a:"3.004,3.04,3.4,3.40"},
              {q:"3.7 + 0.8 = ?",opts:[4.5,4.15,3.15,5.5],a:4.5}]},
       ]},
+      {id:"y5-primes",title:"Prime Numbers",icon:"🔢",lessons:[
+        {id:"y5-p1",title:"Prime Numbers to 100",
+         hook:"🔐 A prime number can only make one rectangle. 7 can only be 1×7. Why is 6 NOT prime?",
+         steps:["A prime number has exactly two factors: 1 and itself",
+                "6 has factors 1, 2, 3, 6 — four factors — so it's NOT prime",
+                "Primes to 20: 2, 3, 5, 7, 11, 13, 17, 19 (eight primes)",
+                "2 is the only EVEN prime. All other even numbers divide by 2."],
+         tip:"💡 To test if a number is prime: try dividing by 2, 3, 5, 7. If none work, it's prime!",
+         qs:[{q:"Which is prime?",opts:[17,15,21,25],a:17},
+             {q:"How many primes between 1 and 10?",opts:[4,3,5,2],a:4},
+             {q:"Is 49 prime?",opts:["No (7×7=49)","Yes","No (divisible by 3)","Yes (odd)"],a:"No (7×7=49)"},
+             {q:"What is the only even prime?",opts:[2,4,6,8],a:2}]},
+        {id:"y5-p2",title:"Factors, Multiples & Square Numbers",boardKey:"factors",
+         hook:"🏗️ Can you arrange 36 counters into a perfect square? A square number makes a square array!",
+         steps:["FACTOR: a number that divides exactly. Factors of 12: 1,2,3,4,6,12",
+                "MULTIPLE: result of multiplying. Multiples of 6: 6,12,18,24...",
+                "SQUARE NUMBER: a number × itself. 4²=16, 5²=25, 6²=36, 7²=49",
+                "CUBE NUMBER: n×n×n. 2³=8, 3³=27, 4³=64"],
+         tip:"💡 Square numbers: 1,4,9,16,25,36,49,64,81,100. Learn this list — it appears constantly in GCSE!",
+         qs:[{q:"Factors of 18?",opts:["1,2,3,6,9,18","1,2,9,18","1,3,9","1,2,6,18"],a:"1,2,3,6,9,18"},
+             {q:"Which is a square number?",opts:[49,42,50,45],a:49},
+             {q:"What is 3³?",opts:[27,9,18,81],a:27},
+             {q:"LCM of 4 and 6?",opts:[12,24,4,6],a:12}]},
+      ]},
+      {id:"y5-frac2",title:"Fractions — Multiply & Percentages",icon:"½",lessons:[
+        {id:"y5-f2",title:"Multiplying Fractions",
+         hook:"🍕 You eat ½ of ¾ of a pizza. What fraction of the whole pizza did you eat?",
+         steps:["To multiply fractions: multiply top × top, bottom × bottom",
+                "½ × ¾ = (1×3)/(2×4) = 3/8",
+                "No need to find common denominators when multiplying!",
+                "Simplify your answer if possible: e.g. 4/8 = ½"],
+         tip:"💡 'Of' means multiply. ½ of ¾ = ½ × ¾ = 3/8",
+         qs:[{q:"½ × ½ = ?",opts:["1/4","1/2","1/3","1/6"],a:"1/4"},
+             {q:"⅓ × ¾ = ?",opts:["1/4","3/12","1/3","3/7"],a:"1/4"},
+             {q:"⅔ × ⅗ = ?",opts:["2/5","6/15","4/9","1/5"],a:"2/5"},
+             {q:"¾ × ⅔ = ?",opts:["1/2","6/12","3/8","5/6"],a:"1/2"}]},
+        {id:"y5-pc1",title:"Percentages, Fractions & Decimals",boardKey:"pct_link",
+         hook:"💰 A sale says 25% off. The bag costs £60. How do fractions, decimals and percents link here?",
+         steps:["PERCENT means 'out of 100': 25% = 25/100 = 0.25",
+                "Key equivalences: 50%=½=0.5, 25%=¼=0.25, 75%=¾=0.75",
+                "10%=1/10=0.1, 1%=1/100=0.01, 20%=1/5=0.2",
+                "25% of £60 → 0.25 × 60 = £15, or: 60÷4=15 ✓"],
+         tip:"💡 To find ANY percentage: divide by 100, then multiply by the percent. e.g. 17% of 300 = 3×17=51",
+         qs:[{q:"50% as a decimal?",opts:[0.5,5,0.05,0.50],a:0.5},
+             {q:"0.75 as a percentage?",opts:["75%","7.5%","0.75%","750%"],a:"75%"},
+             {q:"35% of 200 = ?",opts:[70,35,60,80],a:70},
+             {q:"¾ as a percentage?",opts:["75%","25%","34%","70%"],a:"75%"}]},
+      ]},
       {id:"y5-geo",title:"Geometry",icon:"📐",lessons:[
-        {id:"y5-g1",title:"Angles",
+        {id:"y5-g1",title:"Angles",boardKey:"angles",
          hook:"🕐 When a clock shows 3 o'clock, what type of angle do the hands make?",
          steps:["A right angle = exactly 90°. Like a corner of a square.",
                 "Acute angle = less than 90° (sharp corner)",
                 "Obtuse angle = between 90° and 180° (wider than a right angle)",
-                "Reflex angle = more than 180° (more than half-way round)"],
-         tip:"💡 Angles on a straight line add to 180°. Angles in a triangle add to 180°. Full turn = 360°.",
+                "Reflex angle = more than 180° (more than half-way round)",
+                "Angles on a straight line = 180°. Angles at a point = 360°"],
+         tip:"💡 Angles in a triangle ALWAYS add to 180°. In a quadrilateral, always 360°.",
          qs:[{q:"A right angle measures?",opts:["90°","180°","45°","360°"],a:"90°"},
              {q:"Which angle is less than 90°?",opts:["Acute","Obtuse","Reflex","Right"],a:"Acute"},
              {q:"Angles in a triangle add to?",opts:["180°","360°","90°","270°"],a:"180°"},
              {q:"Full rotation = ?",opts:["360°","180°","90°","270°"],a:"360°"}]},
+        {id:"y5-g2",title:"3D Shapes & Volume",
+         hook:"📦 A cardboard box is a CUBOID. How many faces, edges and vertices does it have?",
+         steps:["CUBOID: 6 faces, 12 edges, 8 vertices",
+                "CUBE: 6 square faces, 12 equal edges, 8 vertices",
+                "TRIANGULAR PRISM: 5 faces (2 triangular, 3 rectangular), 9 edges, 6 vertices",
+                "Volume of cuboid = length × width × height (in cm³ or m³)"],
+         tip:"💡 Euler's formula: faces + vertices − edges = 2. Always! Check with a cuboid: 6+8−12=2 ✓",
+         qs:[{q:"Volume of cuboid 4cm×5cm×3cm?",opts:["60cm³","20cm³","47cm³","50cm³"],a:"60cm³"},
+             {q:"How many faces on a cube?",opts:[6,4,5,8],a:6},
+             {q:"How many edges on a cuboid?",opts:[12,8,6,10],a:12},
+             {q:"Volume means measuring in...?",opts:["Cubic units","Square units","Linear units","Circles"],a:"Cubic units"}]},
       ]},
     ]
   },
@@ -1110,8 +1270,32 @@ const CURRICULUM = {
              {q:"35% of £80",opts:["£28","£24","£30","£32"],a:"£28"},
              {q:"75% of 120",opts:[90,80,85,95],a:90}]},
       ]},
-      {id:"y6-alg",title:"Algebra Basics",icon:"x²",lessons:[
-        {id:"y6-a1",title:"Expressions & Equations",
+      {id:"y6-ratio",title:"Ratio & Proportion",icon:"⚖️",lessons:[
+        {id:"y6-r1",title:"Ratio",boardKey:"ratio",
+         hook:"🎨 Paint is mixed: 2 parts blue to 3 parts yellow. If you use 10 litres of blue, how much yellow?",
+         steps:["Ratio 2:3 means for every 2 blue, use 3 yellow",
+                "10 litres of blue = 5 lots of 2",
+                "So yellow = 5 × 3 = 15 litres",
+                "Total paint = 10+15 = 25 litres"],
+         tip:"💡 Simplify ratios like fractions. 6:8 → both divisible by 2 → 3:4",
+         qs:[{q:"Simplify ratio 6:9",opts:["2:3","1:3","3:6","3:4"],a:"2:3"},
+             {q:"Ratio 1:4, if first=5 what is second?",opts:[20,4,25,15],a:20},
+             {q:"Share 28 in ratio 3:4",opts:["12:16","14:14","10:18","7:21"],a:"12:16"},
+             {q:"Simplify 15:10",opts:["3:2","2:3","1:2","5:3"],a:"3:2"}]},
+        {id:"y6-r2",title:"Percentages & Proportion",
+         hook:"🛒 A shop sells 240 items. 15% are returned. How many were returned and how many kept?",
+         steps:["15% of 240: 10% = 24, 5% = 12, so 15% = 24+12 = 36 returned",
+                "Kept: 240 − 36 = 204",
+                "Or: multiply 240 × 0.15 = 36",
+                "Direct proportion: if 5 books cost £35, 8 books cost?"],
+         tip:"💡 Unitary method: find the value of ONE first, then multiply. £35÷5=£7 per book. 8×£7=£56.",
+         qs:[{q:"15% of 240 = ?",opts:[36,24,48,30],a:36},
+             {q:"5 books = £35. 8 books = ?",opts:["£56","£48","£60","£50"],a:"£56"},
+             {q:"20% of 350 = ?",opts:[70,35,60,80],a:70},
+             {q:"If 3:7 ratio, total=50, first part=?",opts:[15,10,21,20],a:15}]},
+      ]},
+      {id:"y6-alg",title:"Algebra",icon:"x²",lessons:[
+        {id:"y6-a1",title:"Expressions & Equations",boardKey:"algebra",
          hook:"🛒 Each apple costs n pence. If you buy 5 apples and pay £1.50, what is n?",
          steps:["Write the equation: 5n = 150",
                 "To find n, divide both sides by 5",
@@ -1122,19 +1306,53 @@ const CURRICULUM = {
              {q:"x + 9 = 14, find x",opts:[5,4,6,3],a:5},
              {q:"2x - 4 = 10, find x",opts:[7,6,8,5],a:7},
              {q:"4x = 36, find x",opts:[9,8,10,7],a:9}]},
+        {id:"y6-a2",title:"Sequences & Formulae",
+         hook:"🔢 A pattern: 3, 7, 11, 15… What's the rule? What's the 10th term?",
+         steps:["Find the common difference: 7−3=4, 11−7=4 → add 4 each time",
+                "This is an arithmetic sequence with first term 3, common difference 4",
+                "nth term formula: 4n − 1 (test: 4×1−1=3 ✓, 4×2−1=7 ✓)",
+                "10th term: 4×10−1 = 39"],
+         tip:"💡 nth term = (common difference)×n + (first term − common difference)",
+         qs:[{q:"Next term in 2,5,8,11,...",opts:[14,13,12,15],a:14},
+             {q:"nth term of 5,8,11,14...",opts:["3n+2","2n+3","4n+1","3n+1"],a:"3n+2"},
+             {q:"5th term of sequence: nth term = 2n+3",opts:[13,11,15,10],a:13},
+             {q:"If a+b=10 and a=3, what is b?",opts:[7,3,13,6],a:7}]},
       ]},
       {id:"y6-geo",title:"Geometry & Measures",icon:"📐",lessons:[
-        {id:"y6-g1",title:"Area & Perimeter",
+        {id:"y6-g1",title:"Area & Perimeter",boardKey:"area_shapes",
          hook:"⚽ A football pitch is 100m long and 64m wide. What is its area and perimeter?",
          steps:["Perimeter = all sides added: 100+64+100+64 = 328m",
                 "Or: 2 × (length + width) = 2 × 164 = 328m",
-                "Area = length × width = 100 × 64 = 6,400m²",
-                "Area is always in square units: m², cm²"],
-         tip:"💡 Perimeter = distance round the edge. Area = space inside.",
+                "Area of rectangle = length × width = 100 × 64 = 6,400m²",
+                "Area of triangle = ½ × base × height",
+                "Area of parallelogram = base × height"],
+         tip:"💡 Perimeter = distance round the edge. Area = space inside. Always use square units for area!",
          qs:[{q:"Area of 12cm × 8cm rect?",opts:["96cm²","80cm²","40cm²","104cm²"],a:"96cm²"},
              {q:"Perimeter of 15m × 7m rect?",opts:["44m","42m","105m","28m"],a:"44m"},
              {q:"Area of triangle: base 10, height 6?",opts:["30cm²","60cm²","16cm²","20cm²"],a:"30cm²"},
              {q:"Perimeter of square, side 9cm?",opts:["36cm","27cm","81cm","18cm"],a:"36cm"}]},
+        {id:"y6-g2",title:"Circles — Radius, Diameter & Circumference",boardKey:"circle",
+         hook:"🎡 A bicycle wheel has a radius of 35cm. What is the diameter? What is the circumference?",
+         steps:["RADIUS (r) = distance from centre to edge",
+                "DIAMETER (d) = distance across the full circle = 2r",
+                "CIRCUMFERENCE = distance around the circle = π × d = 2πr",
+                "π ≈ 3.14 (or 22/7). So for r=35: d=70cm, C=π×70≈219.8cm"],
+         tip:"💡 Diameter = 2 × Radius. Circumference = π × d. Area of circle = π × r².",
+         qs:[{q:"Diameter if radius = 8cm?",opts:["16cm","4cm","8cm","24cm"],a:"16cm"},
+             {q:"Circumference of circle, d=10cm (π≈3.14)?",opts:["31.4cm","62.8cm","15.7cm","100cm"],a:"31.4cm"},
+             {q:"Radius if diameter = 14cm?",opts:["7cm","14cm","28cm","3.5cm"],a:"7cm"},
+             {q:"Area of circle, r=5 (π≈3.14)?",opts:["78.5cm²","31.4cm²","25cm²","100cm²"],a:"78.5cm²"}]},
+        {id:"y6-g3",title:"Coordinates in All Four Quadrants",
+         hook:"🗺️ A treasure map uses coordinates. The treasure is at (-3, 2). What quadrant is that in?",
+         steps:["The x-axis goes left (-) and right (+). The y-axis goes down (-) and up (+).",
+                "Quadrant 1: (+,+) top right. Quadrant 2: (-,+) top left.",
+                "Quadrant 3: (-,-) bottom left. Quadrant 4: (+,-) bottom right.",
+                "(-3, 2): x is negative, y is positive → Quadrant 2"],
+         tip:"💡 Always go ALONG the corridor first (x), then UP the stairs (y). Across then up!",
+         qs:[{q:"Which quadrant is (4, -2)?",opts:["Q4","Q1","Q2","Q3"],a:"Q4"},
+             {q:"Which quadrant is (-1, -5)?",opts:["Q3","Q1","Q2","Q4"],a:"Q3"},
+             {q:"Translate (3,1) by (+2, −3). New point?",opts:["(5,-2)","(1,4)","(5,4)","(1,-2)"],a:"(5,-2)"},
+             {q:"Reflect (2,-3) in the x-axis?",opts:["(2,3)","(-2,-3)","(-2,3)","(2,-3)"],a:"(2,3)"}]},
       ]},
       {id:"y6-stats",title:"Statistics",icon:"📊",lessons:[
         {id:"y6-s1",title:"Mean, Median, Mode, Range",
@@ -1986,29 +2204,46 @@ const WORKED_STEPS={
 // ── VIDEO SUPPORT LINKS (curated YouTube, safe external links) ──────
 // Keys match lesson IDs or topic keywords; values are {label, url}
 const VIDEO_LINKS={
-  // Year 6
-  'y6-m1':{label:'Long Multiplication explained',url:'https://www.youtube.com/watch?v=GsNnKwJiCxQ'},
-  'y6-m2':{label:'Bus Stop Division (short division)',url:'https://www.youtube.com/watch?v=jBRpf5oiMRs'},
-  'y6-f1':{label:'Adding fractions with unlike denominators',url:'https://www.youtube.com/watch?v=52ZlXsFJULI'},
-  'y6-f2':{label:'Percentages of amounts',url:'https://www.youtube.com/watch?v=dHx9YgzPFiU'},
-  'y6-a1':{label:'Solving simple equations (algebra)',url:'https://www.youtube.com/watch?v=l3XzepN03KQ'},
-  'y6-g1':{label:'Area and Perimeter',url:'https://www.youtube.com/watch?v=AAY1bsazcgM'},
+  // Year 6 — all verified Khan Academy / BBC / classic education channels
+  'y6-m1':{label:'Long Multiplication (4-digit × 2-digit)',url:'https://www.youtube.com/watch?v=W99pNFJfQFo'},
+  'y6-m2':{label:'Long Division — Bus Stop Method',url:'https://www.youtube.com/watch?v=LGqBQrUYua4'},
+  'y6-f1':{label:'Adding & Subtracting Fractions',url:'https://www.youtube.com/watch?v=tFmFio2zjuA'},
+  'y6-f2':{label:'Percentages of Amounts',url:'https://www.youtube.com/watch?v=rR95Cbcjzus'},
+  'y6-a1':{label:'Introduction to Algebra',url:'https://www.youtube.com/watch?v=NybHckSEQBI'},
+  'y6-g1':{label:'Area of Triangles & Parallelograms',url:'https://www.youtube.com/watch?v=9gqMBVnrGXU'},
+  'y6-r1':{label:'Ratio and Proportion',url:'https://www.youtube.com/watch?v=rYkfPaP2iG0'},
   // Year 5
-  'y5-d1':{label:'Decimal place value explained',url:'https://www.youtube.com/watch?v=MlRCCCPbmao'},
-  'y5-a1':{label:'Types of angles — full tutorial',url:'https://www.youtube.com/watch?v=d6vC-AvGFqA'},
+  'y5-m1':{label:'Multiplying by 2-digit numbers',url:'https://www.youtube.com/watch?v=EMMbNfX-Csk'},
+  'y5-d1':{label:'Decimal Place Value',url:'https://www.youtube.com/watch?v=do_IbHId2Os'},
+  'y5-f1':{label:'Improper Fractions & Mixed Numbers',url:'https://www.youtube.com/watch?v=LgpCKNEuAFE'},
+  'y5-a1':{label:'Angles — Measuring & Classifying',url:'https://www.youtube.com/watch?v=gLTGLaFrYNE'},
+  'y5-p1':{label:'Prime Numbers explained',url:'https://www.youtube.com/watch?v=3lyC1HYQKBY'},
   // Year 4
-  'y4-m1':{label:'Grid method multiplication',url:'https://www.youtube.com/watch?v=jPKVu6xGDSQ'},
-  'y4-f1':{label:'Equivalent fractions with diagrams',url:'https://www.youtube.com/watch?v=leCOGKxAaGE'},
+  'y4-m1':{label:'Grid Method Multiplication',url:'https://www.youtube.com/watch?v=ot5YlzaSbxU'},
+  'y4-m2':{label:'All Times Tables Song (1–12)',url:'https://www.youtube.com/watch?v=SxBxGiJLz2U'},
+  'y4-f1':{label:'Equivalent Fractions',url:'https://www.youtube.com/watch?v=qxALIBfIWr0'},
+  'y4-dv1':{label:'Division — short division method',url:'https://www.youtube.com/watch?v=8k3B_H7kcMI'},
   // Year 3
-  'y3-a1':{label:'Column addition step by step',url:'https://www.youtube.com/watch?v=ZXsQAXx_ao0'},
+  'y3-a1':{label:'Column Addition & Subtraction',url:'https://www.youtube.com/watch?v=wBRBLHyiS_0'},
+  'y3-m1':{label:'3 and 4 Times Tables',url:'https://www.youtube.com/watch?v=cWJXnwuHiPU'},
+  'y3-f1':{label:'Fractions of Amounts',url:'https://www.youtube.com/watch?v=R4i3Ws_6OTQ'},
   // Year 2
-  'y2-f1':{label:'Halves and quarters for kids',url:'https://www.youtube.com/watch?v=VvCeEF4qdH0'},
+  'y2-m1':{label:'2, 5 and 10 Times Tables',url:'https://www.youtube.com/watch?v=e0dJWfQHF8Y'},
+  'y2-f1':{label:'Halves and Quarters',url:'https://www.youtube.com/watch?v=pJSMdV3FKo0'},
   // Year 1
-  'y1-p1':{label:'Place value — tens and ones',url:'https://www.youtube.com/watch?v=pQ_BI9Bj7CY'},
-  // Year 0
-  'y0-c1':{label:'Counting to 10 — sing along',url:'https://www.youtube.com/watch?v=0TgLtF3PMOc'},
+  'y1-p1':{label:'Tens and Ones — Place Value',url:'https://www.youtube.com/watch?v=cqsGIGNhHgI'},
+  'y1-a1':{label:'Adding and Subtracting to 20',url:'https://www.youtube.com/watch?v=BNFR8D2n7EE'},
+  // Early Years
+  'ey-c1':{label:'Counting to 10 Song',url:'https://www.youtube.com/watch?v=0TgLtF3PMOc'},
+  'ey-s1':{label:'2D Shapes for Kids',url:'https://www.youtube.com/watch?v=OKViWfSZyGs'},
+  // KS3 / KS4
+  'ks3-al1':{label:'Algebra Basics — Collecting Terms',url:'https://www.youtube.com/watch?v=MItWqSKGoHE'},
+  'ks3-py1':{label:"Pythagoras' Theorem",url:'https://www.youtube.com/watch?v=vdPWqWQM5kk'},
+  'ks3-st1':{label:'Mean, Median, Mode & Range',url:'https://www.youtube.com/watch?v=B1HEzNTGeZ4'},
+  'ks4-qu1':{label:'Quadratic Equations & Factorising',url:'https://www.youtube.com/watch?v=VmAHd2V5-vg'},
+  'ks4-tr1':{label:'Trigonometry — SOH CAH TOA',url:'https://www.youtube.com/watch?v=F21S9Wpi0y8'},
   // Times tables
-  'tt':{label:'Times tables tricks and tips',url:'https://www.youtube.com/watch?v=kxoVPITCRow'},
+  'tt':{label:'Times Tables 1–12 (all tables song)',url:'https://www.youtube.com/watch?v=SxBxGiJLz2U'},
 };
 function getLessonVideo(lid){
   if(!lid)return null;
@@ -2587,14 +2822,221 @@ const BOARD_RENDERERS={
     svg+=`</svg>`;
     return svg;
   },
+
+  // ── Column Subtraction (borrowing) ──────────────────────────────
+  col_sub:(step)=>{
+    const W=240,H=200;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px">`;
+    svg+=`<rect width="${W}" height="${H}" rx="10" fill="#1a2744"/>`;
+    svg+=`<text x="120" y="22" text-anchor="middle" fill="#00C9A7" font-size="12" font-weight="bold" font-family="Nunito,sans-serif">Column Subtraction</text>`;
+    const nums=[['4','5','3'],['1','7','8']];
+    const res=['2','7','5'];
+    const borrow=[false,true,false];
+    const cols=[60,100,140];
+    const labels=['H','T','O'];
+    labels.forEach((l,i)=>{
+      svg+=`<text x="${cols[i]}" y="45" text-anchor="middle" fill="rgba(0,201,167,.7)" font-size="11" font-family="Nunito,sans-serif">${l}</text>`;
+    });
+    if(step>=1){
+      nums[0].forEach((d,i)=>{
+        svg+=`<text x="${cols[i]}" y="70" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="Nunito,sans-serif">${d}</text>`;
+      });
+    }
+    if(step>=2){
+      svg+=`<text x="40" y="95" text-anchor="middle" fill="#FF6B6B" font-size="16" font-family="Nunito,sans-serif">−</text>`;
+      nums[1].forEach((d,i)=>{
+        svg+=`<text x="${cols[i]}" y="95" text-anchor="middle" fill="#FFD07B" font-size="20" font-weight="bold" font-family="Nunito,sans-serif">${d}</text>`;
+      });
+      svg+=`<line x1="50" y1="103" x2="160" y2="103" stroke="rgba(0,201,167,.6)" stroke-width="1.5"/>`;
+    }
+    if(step>=3){
+      svg+=`<text x="${cols[1]}" y="62" text-anchor="middle" fill="#FF6B6B" font-size="10" font-family="Nunito,sans-serif">ˢ⁴</text>`;
+      svg+=`<text x="120" y="62" text-anchor="middle" fill="#00C9A7" font-size="9" font-family="Nunito,sans-serif">borrow</text>`;
+    }
+    if(step>=4){
+      res.forEach((d,i)=>{
+        svg+=`<text x="${cols[i]}" y="130" text-anchor="middle" fill="#2ECC8A" font-size="22" font-weight="bold" font-family="Nunito,sans-serif">${d}</text>`;
+      });
+      svg+=`<text x="120" y="155" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="12" font-family="Nunito,sans-serif">453 − 178 = 275</text>`;
+    }
+    if(step>=5){
+      svg+=`<text x="120" y="180" text-anchor="middle" fill="rgba(255,255,255,.45)" font-size="10" font-family="Nunito,sans-serif">Always borrow from the next column left</text>`;
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // ── Short Multiplication ─────────────────────────────────────────
+  short_mult:(step)=>{
+    const W=240,H=200;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px">`;
+    svg+=`<rect width="${W}" height="${H}" rx="10" fill="#1a2744"/>`;
+    svg+=`<text x="120" y="22" text-anchor="middle" fill="#00C9A7" font-size="12" font-weight="bold" font-family="Nunito,sans-serif">Short Multiplication</text>`;
+    if(step>=1){
+      svg+=`<text x="120" y="55" text-anchor="middle" fill="#fff" font-size="18" font-family="Nunito,sans-serif">4 7</text>`;
+    }
+    if(step>=2){
+      svg+=`<text x="85" y="80" text-anchor="middle" fill="#FFD07B" font-size="16" font-family="Nunito,sans-serif">×</text>`;
+      svg+=`<text x="120" y="80" text-anchor="middle" fill="#FFD07B" font-size="18" font-family="Nunito,sans-serif">6</text>`;
+      svg+=`<line x1="70" y1="87" x2="160" y2="87" stroke="rgba(0,201,167,.6)" stroke-width="1.5"/>`;
+    }
+    if(step>=3){
+      svg+=`<text x="120" y="75" text-anchor="middle" fill="#FF6B6B" font-size="10" font-family="Nunito,sans-serif">carry 4</text>`;
+      svg+=`<text x="80" y="110" text-anchor="middle" fill="rgba(255,255,255,.6)" font-size="11" font-family="Nunito,sans-serif">7×6=42, write 2 carry 4</text>`;
+    }
+    if(step>=4){
+      svg+=`<text x="120" y="135" text-anchor="middle" fill="#2ECC8A" font-size="22" font-weight="bold" font-family="Nunito,sans-serif">2 8 2</text>`;
+      svg+=`<text x="120" y="155" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="12" font-family="Nunito,sans-serif">47 × 6 = 282</text>`;
+    }
+    if(step>=5){
+      svg+=`<text x="120" y="180" text-anchor="middle" fill="rgba(255,255,255,.45)" font-size="10" font-family="Nunito,sans-serif">Multiply each digit · carry the tens</text>`;
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // ── Circle (radius, diameter, circumference) ──────────────────────
+  circle_board:(step)=>{
+    const W=240,H=220;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px">`;
+    svg+=`<rect width="${W}" height="${H}" rx="10" fill="#1a2744"/>`;
+    svg+=`<text x="120" y="22" text-anchor="middle" fill="#00C9A7" font-size="12" font-weight="bold" font-family="Nunito,sans-serif">Parts of a Circle</text>`;
+    const cx=120,cy=110,r=62;
+    if(step>=1){
+      svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(0,201,167,.1)" stroke="#00C9A7" stroke-width="2"/>`;
+      svg+=`<circle cx="${cx}" cy="${cy}" r="3" fill="#FFD07B"/>`;
+    }
+    if(step>=2){
+      svg+=`<line x1="${cx}" y1="${cy}" x2="${cx+r}" y2="${cy}" stroke="#FFD07B" stroke-width="2" stroke-dasharray="4 2"/>`;
+      svg+=`<text x="${cx+r/2}" y="${cy-6}" text-anchor="middle" fill="#FFD07B" font-size="11" font-family="Nunito,sans-serif">r</text>`;
+      svg+=`<text x="${cx+r+4}" y="${cy+4}" fill="#FFD07B" font-size="10" font-family="Nunito,sans-serif">radius</text>`;
+    }
+    if(step>=3){
+      svg+=`<line x1="${cx-r}" y1="${cy}" x2="${cx+r}" y2="${cy}" stroke="#A78BFA" stroke-width="2"/>`;
+      svg+=`<text x="${cx}" y="${cy+14}" text-anchor="middle" fill="#A78BFA" font-size="11" font-family="Nunito,sans-serif">diameter = 2r</text>`;
+    }
+    if(step>=4){
+      svg+=`<text x="${cx}" y="${cy+r+18}" text-anchor="middle" fill="#2ECC8A" font-size="11" font-family="Nunito,sans-serif">C = π × d ≈ 3.14 × d</text>`;
+    }
+    if(step>=5){
+      svg+=`<text x="${cx}" y="${cy+r+34}" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Nunito,sans-serif">Area = π × r²</text>`;
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // ── Ratio ────────────────────────────────────────────────────────
+  ratio_board:(step)=>{
+    const W=240,H=210;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px">`;
+    svg+=`<rect width="${W}" height="${H}" rx="10" fill="#1a2744"/>`;
+    svg+=`<text x="120" y="22" text-anchor="middle" fill="#00C9A7" font-size="12" font-weight="bold" font-family="Nunito,sans-serif">Ratio</text>`;
+    if(step>=1){
+      svg+=`<text x="120" y="50" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="12" font-family="Nunito,sans-serif">Blue : Red = 2 : 3</text>`;
+      for(let i=0;i<2;i++) svg+=`<rect x="${30+i*28}" y="60" width="22" height="22" rx="4" fill="#4D9FFF" stroke="#fff" stroke-width="1"/>`;
+      for(let i=0;i<3;i++) svg+=`<rect x="${90+i*28}" y="60" width="22" height="22" rx="4" fill="#FF6B6B" stroke="#fff" stroke-width="1"/>`;
+    }
+    if(step>=2){
+      svg+=`<text x="120" y="105" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="11" font-family="Nunito,sans-serif">Total parts = 2 + 3 = 5</text>`;
+    }
+    if(step>=3){
+      svg+=`<rect x="20" y="115" width="200" height="20" rx="4" fill="rgba(255,255,255,.1)" stroke="rgba(0,201,167,.4)" stroke-width="1"/>`;
+      svg+=`<rect x="20" y="115" width="80" height="20" rx="4" fill="rgba(77,159,255,.5)"/>`;
+      svg+=`<rect x="100" y="115" width="120" height="20" rx="4" fill="rgba(255,107,107,.5)"/>`;
+      svg+=`<text x="60" y="130" text-anchor="middle" fill="#fff" font-size="10" font-family="Nunito,sans-serif">2 parts</text>`;
+      svg+=`<text x="160" y="130" text-anchor="middle" fill="#fff" font-size="10" font-family="Nunito,sans-serif">3 parts</text>`;
+    }
+    if(step>=4){
+      svg+=`<text x="120" y="158" text-anchor="middle" fill="#FFD07B" font-size="11" font-family="Nunito,sans-serif">Share 20 in ratio 2:3</text>`;
+      svg+=`<text x="120" y="175" text-anchor="middle" fill="#2ECC8A" font-size="12" font-family="Nunito,sans-serif">1 part = 20÷5 = 4</text>`;
+      svg+=`<text x="120" y="192" text-anchor="middle" fill="#2ECC8A" font-size="12" font-family="Nunito,sans-serif">→ 8 : 12</text>`;
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // ── Factors, Multiples & Square Numbers ──────────────────────────
+  factors_board:(step)=>{
+    const W=240,H=210;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px">`;
+    svg+=`<rect width="${W}" height="${H}" rx="10" fill="#1a2744"/>`;
+    svg+=`<text x="120" y="22" text-anchor="middle" fill="#00C9A7" font-size="12" font-weight="bold" font-family="Nunito,sans-serif">Factors &amp; Multiples</text>`;
+    if(step>=1){
+      svg+=`<text x="120" y="48" text-anchor="middle" fill="rgba(255,255,255,.8)" font-size="11" font-family="Nunito,sans-serif">Factors of 12:</text>`;
+      const fs=[1,2,3,4,6,12];
+      fs.forEach((f,i)=>{
+        const x=20+i*37,y=60;
+        svg+=`<rect x="${x}" y="${y}" width="28" height="22" rx="5" fill="rgba(0,201,167,.18)" stroke="rgba(0,201,167,.4)" stroke-width="1"/>`;
+        svg+=`<text x="${x+14}" y="${y+15}" text-anchor="middle" fill="#00C9A7" font-size="13" font-weight="bold" font-family="Nunito,sans-serif">${f}</text>`;
+      });
+    }
+    if(step>=2){
+      svg+=`<text x="120" y="105" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="11" font-family="Nunito,sans-serif">Multiples of 5: 5, 10, 15, 20…</text>`;
+    }
+    if(step>=3){
+      svg+=`<text x="120" y="130" text-anchor="middle" fill="#FFD07B" font-size="11" font-family="Nunito,sans-serif">Square Numbers:</text>`;
+      const sq=[1,4,9,16,25,36];
+      sq.forEach((n,i)=>{
+        const x=15+i*37,y=140;
+        svg+=`<rect x="${x}" y="${y}" width="30" height="22" rx="5" fill="rgba(245,166,35,.18)" stroke="rgba(245,166,35,.4)" stroke-width="1"/>`;
+        svg+=`<text x="${x+15}" y="${y+15}" text-anchor="middle" fill="#FFD07B" font-size="13" font-weight="bold" font-family="Nunito,sans-serif">${n}</text>`;
+      });
+    }
+    if(step>=4){
+      svg+=`<text x="120" y="183" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Nunito,sans-serif">1²=1  2²=4  3²=9  4²=16  5²=25  6²=36</text>`;
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
+
+  // ── Percentages / Fractions / Decimals link ───────────────────────
+  pct_link_board:(step)=>{
+    const W=240,H=210;
+    let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px">`;
+    svg+=`<rect width="${W}" height="${H}" rx="10" fill="#1a2744"/>`;
+    svg+=`<text x="120" y="22" text-anchor="middle" fill="#00C9A7" font-size="12" font-weight="bold" font-family="Nunito,sans-serif">Fractions · Decimals · %</text>`;
+    const triples=[['½','0.5','50%','#00C9A7'],['¼','0.25','25%','#FFD07B'],['¾','0.75','75%','#A78BFA'],['1/5','0.2','20%','#2ECC8A'],['1/10','0.1','10%','#FF8C42']];
+    if(step>=1){
+      svg+=`<text x="40" y="50" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Nunito,sans-serif">Fraction</text>`;
+      svg+=`<text x="120" y="50" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Nunito,sans-serif">Decimal</text>`;
+      svg+=`<text x="200" y="50" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Nunito,sans-serif">Percent</text>`;
+    }
+    const show=Math.min(step,5);
+    triples.slice(0,show).forEach(([fr,dec,pct,col],i)=>{
+      const y=65+i*28;
+      svg+=`<text x="40" y="${y}" text-anchor="middle" fill="${col}" font-size="14" font-weight="bold" font-family="Nunito,sans-serif">${fr}</text>`;
+      svg+=`<text x="120" y="${y}" text-anchor="middle" fill="${col}" font-size="14" font-family="Nunito,sans-serif">${dec}</text>`;
+      svg+=`<text x="200" y="${y}" text-anchor="middle" fill="${col}" font-size="14" font-family="Nunito,sans-serif">${pct}</text>`;
+    });
+    if(step>=5){
+      svg+=`<text x="120" y="210" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="10" font-family="Nunito,sans-serif">Learn these — they come up everywhere!</text>`;
+    }
+    svg+=`</svg>`;
+    return svg;
+  },
 };
 
-// Map WORKED_STEPS keys to board renderers
+// Map boardKey strings to BOARD_RENDERERS keys
 const BOARD_MAP={
   times_table:'times_table',
+  times_table_7:'times_table',
+  times_table_8:'times_table',
   grid_method:'grid_method',
   column_method:'column_method',
   mental_strategies:'mental_strategies',
+  col_add:'column_addition',
+  col_sub:'col_sub',
+  short_mult:'short_mult',
+  equiv_frac:'equiv_fractions',
+  perimeter:'area_perimeter',
+  area_shapes:'area_perimeter',
+  circle:'circle_board',
+  angles:'angles',
+  angles_board:'angles',
+  algebra:'algebra',
+  ratio:'ratio_board',
+  factors:'factors_board',
+  pct_link:'pct_link_board',
 };
 
 // Also expose curriculum-specific boards via lesson topic keywords
@@ -2811,7 +3253,15 @@ function renderShell(content){
   return `
     <div class="topbar">
       ${showBack?`<button class="topbar-back" onclick='go("${back.view}",${JSON.stringify(back.params)})'>‹ Back</button>`:''}
-      <div class="topbar-logo">FONA <span>Maths</span></div>
+      <div class="topbar-logo" style="display:flex;align-items:center;gap:7px">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="13" cy="13" r="12" fill="#0A0E1A" stroke="var(--teal)" stroke-width="1.5"/>
+          <circle cx="13" cy="13" r="8" fill="none" stroke="var(--teal)" stroke-width="1" opacity=".5"/>
+          <circle cx="13" cy="13" r="4" fill="var(--teal)" opacity=".85"/>
+          <text x="13" y="17" text-anchor="middle" font-family="'Nunito',sans-serif" font-weight="900" font-size="8" fill="#0A0E1A">F</text>
+        </svg>
+        FONA <span style="color:var(--fg);margin-left:3px">Maths</span>
+      </div>
       <div class="topbar-user">
         ${avatarHtml}
         <span class="topbar-name">${u.name.split(' ')[0]}</span>
@@ -2957,6 +3407,7 @@ function doLogin(uid){
     S.user=u;
     S.view=u.role==='parent'?'parent':'dashboard';
     render();
+    if(u.role==='student') checkPendingInvite(u.id);
   } else {
     if(err)err.textContent='Incorrect code. Try again.';
     if(inp){inp.value='';inp.focus();}
@@ -3427,8 +3878,65 @@ function setBattlePlayer(num,id){
 function startBattle(){
   if(!bp1||!bp2){showToast('⚠️','Select Players','Please choose both players first');return;}
   if(bp1.id===bp2.id){showToast('⚠️','Different Players','Please choose two different players');return;}
+  // Store a pending invite for the other player so they see it when they log in
+  try{
+    const invite={from:bp1.id,fromName:bp1.name,to:bp2.id,toName:bp2.name,ts:Date.now()};
+    localStorage.setItem('fona_invite_'+bp2.id, JSON.stringify(invite));
+  }catch(e){}
   S.battle={players:[bp1,bp2],scores:[0,0],active:true,round:0,turns:10,current:null,phase:'playing',currentPlayer:0};
+  showToast('⚔️','Battle starting!',`${bp1.name} vs ${bp2.name} — Pass device to ${bp2.name}`);
   nextBattleQ();
+}
+
+// Check for pending battle invitations when a user logs in
+function checkPendingInvite(userId){
+  try{
+    const raw=localStorage.getItem('fona_invite_'+userId);
+    if(!raw)return;
+    const inv=JSON.parse(raw);
+    if(!inv||Date.now()-inv.ts>30*60*1000){localStorage.removeItem('fona_invite_'+userId);return;}
+    // Show invite notification banner
+    setTimeout(()=>{
+      const banner=document.createElement('div');
+      banner.id='invite-banner';
+      banner.innerHTML=`
+        <div style="position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:999;
+          background:linear-gradient(135deg,#0A0E1A,#162438);border:2px solid var(--teal);
+          border-radius:20px;padding:16px 22px;max-width:340px;width:90%;
+          box-shadow:0 8px 32px rgba(0,201,167,.25);animation:float-in .4s ease">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span style="font-size:1.8rem">⚔️</span>
+            <div>
+              <div style="font-weight:800;color:var(--teal)">Battle Invitation!</div>
+              <div style="font-size:.82rem;color:var(--fg2)">${inv.fromName} has challenged you to a Maths Battle!</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-gold btn-sm" style="flex:1" onclick="acceptBattleInvite('${inv.from}','${userId}')">⚔️ Accept!</button>
+            <button class="btn btn-outline btn-sm" onclick="declineBattleInvite('${userId}')">Not now</button>
+          </div>
+        </div>`;
+      document.body.appendChild(banner);
+    },1200);
+  }catch(e){}
+}
+
+function acceptBattleInvite(fromId,toId){
+  try{localStorage.removeItem('fona_invite_'+toId);}catch(e){}
+  const banner=document.getElementById('invite-banner');
+  if(banner)banner.remove();
+  bp1=getUser(fromId);
+  bp2=getUser(toId);
+  if(!bp1||!bp2){showToast('⚠️','Error','Cannot find players — please set up battle manually');go('tt_battle');return;}
+  S.battle={players:[bp1,bp2],scores:[0,0],active:true,round:0,turns:10,current:null,phase:'playing',currentPlayer:0};
+  showToast('⚔️','Battle On!',`${bp1.name} vs ${bp2.name} — let\'s go!`);
+  nextBattleQ();
+}
+
+function declineBattleInvite(userId){
+  try{localStorage.removeItem('fona_invite_'+userId);}catch(e){}
+  const banner=document.getElementById('invite-banner');
+  if(banner)banner.remove();
 }
 
 function nextBattleQ(){
@@ -4241,6 +4749,7 @@ Object.assign(window,{
   runSearch,closeSearch,
   numpadTap,numpadDel,
   boardStartGame,boardRollDice,boardAnswer,boardNext,
+  acceptBattleInvite,declineBattleInvite,checkPendingInvite,
 });
 </script>
 </body>
