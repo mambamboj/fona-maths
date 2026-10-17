@@ -3535,9 +3535,24 @@ function render(){
     parent:renderParent,
     settings:renderSettings,
   };
-  const viewFn=views[S.view]||renderDashboard;
-  app.innerHTML=renderShell(viewFn());
-  bindAll();
+  try{
+    const viewFn=views[S.view]||renderDashboard;
+    app.innerHTML=renderShell(viewFn());
+    bindAll();
+  }catch(err){
+    console.error('Render error:',err);
+    // Recover to dashboard rather than showing a blank screen
+    try{
+      S.view='dashboard';S.params={};
+      app.innerHTML=renderShell(renderDashboard());
+      bindAll();
+    }catch(e2){
+      // Last resort — go back to login
+      S.user=null;
+      app.innerHTML=renderLogin();
+      bindLogin();
+    }
+  }
 }
 
 function renderShell(content){
@@ -3973,7 +3988,7 @@ function renderTTPracticeQ(){
     <div class="qtext">${question} = ?</div>
   </div>
   <div class="tt-input-box">
-    <input type="text" inputmode="numeric" class="tt-input" id="tt-ans" placeholder="?" autocomplete="off" readonly>
+    <input type="text" inputmode="numeric" class="tt-input" id="tt-ans" placeholder="?" autocomplete="off" data-correct="${correct}">
   </div>
   <div id="tt-feedback" style="text-align:center;font-size:1rem;min-height:28px"></div>
   <div class="numpad">
@@ -4278,7 +4293,7 @@ function nextBattleQ(){
     </div>`).join('')}
   </div>
   <div class="quiz-question">
-    <div class="qhook">${cp.avatar} ${cp.name}'s turn — look away ${b.players[1-b.currentPlayer].name}! 👀</div>
+    <div class="qhook">${cp.avatar&&cp.avatar.startsWith('data:')?`<img src="${cp.avatar}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px">`:`<span style="margin-right:4px">${cp.avatar||'👤'}</span>`}${cp.name}'s turn — look away ${b.players[1-b.currentPlayer].name}! 👀</div>
     <div class="qtext">${a} × ${n} = ?</div>
   </div>
   <div class="answer-grid mt12">
@@ -5081,15 +5096,25 @@ function resetVid(lid){
 }
 // ─── BIND EVENTS ─────────────────────────────────────────────────
 function bindAll(){
-  // pin-input no longer used (inline per-card inputs handle Enter in bindLogin)
-  // TT answer enter key
+  // TT answer keyboard support — digits, backspace, enter
   const ta=el('tt-ans');
-  if(ta)ta.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){
-      const cb=ta.closest('.page')?.querySelector('.btn-gold');
-      if(cb)cb.click();
-    }
-  });
+  if(ta){
+    // Prevent non-numeric typed characters (allow control keys)
+    ta.addEventListener('keydown',e=>{
+      // Enter = submit
+      if(e.key==='Enter'){checkTTAns(parseInt(ta.dataset.correct||'0'));return;}
+      // Backspace handled natively since input is not readonly
+      if(e.key==='Backspace'||e.key==='Delete'||e.key==='Tab'||e.key==='ArrowLeft'||e.key==='ArrowRight')return;
+      // Allow only digit keys 0–9
+      if(!/^\d$/.test(e.key)){e.preventDefault();}
+    });
+    ta.addEventListener('input',e=>{
+      // Cap at 3 digits, strip non-digits
+      let v=ta.value.replace(/\D/g,'').slice(0,3);
+      ta.value=v;
+      ta.classList.remove('wrong','correct');
+    });
+  }
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────
